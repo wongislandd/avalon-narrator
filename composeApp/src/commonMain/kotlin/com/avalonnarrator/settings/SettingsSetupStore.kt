@@ -1,5 +1,6 @@
 package com.avalonnarrator.settings
 
+import com.avalonnarrator.domain.audio.VoicePackId
 import com.avalonnarrator.domain.roles.RoleId
 import com.avalonnarrator.domain.setup.GameModule
 import com.avalonnarrator.domain.setup.GameSetupConfig
@@ -22,7 +23,7 @@ class SettingsSetupStore(
             enabledModules = parseModules(settings.getString(KEY_ENABLED_MODULES, "")),
             narrationPace = enumValueOrDefault(settings.getString(KEY_PACE, defaults.narrationPace.name), defaults.narrationPace),
             randomSeed = settings.getLongOrNull(KEY_RANDOM_SEED),
-            selectedVoicePack = enumValueOrDefault(
+            selectedVoicePack = parseVoicePack(
                 settings.getString(KEY_VOICE_PACK, defaults.selectedVoicePack.name),
                 defaults.selectedVoicePack,
             ),
@@ -58,6 +59,11 @@ class SettingsSetupStore(
 
     private inline fun <reified T : Enum<T>> enumValueOrDefault(raw: String, default: T): T =
         runCatching { enumValueOf<T>(raw) }.getOrElse { default }
+
+    private fun parseVoicePack(raw: String, default: VoicePackId): VoicePackId = when (raw) {
+        "DRAMATIC_EN" -> VoicePackId.WIZARD
+        else -> enumValueOrDefault(raw, default)
+    }
 
     companion object {
         private const val KEY_PLAYER_COUNT = "player_count"

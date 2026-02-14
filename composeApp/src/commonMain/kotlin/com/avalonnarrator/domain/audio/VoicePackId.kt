@@ -1,6 +1,6 @@
 package com.avalonnarrator.domain.audio
 
 enum class VoicePackId {
-    DRAMATIC_EN,
+    WIZARD,
     RAINBIRD_EN,
 }

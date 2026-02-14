@@ -17,7 +17,7 @@ class DefaultNarrationPlannerTest {
         val planner = DefaultNarrationPlanner()
         val config = GameSetupConfig(
             selectedRoles = setOf(RoleId.MERLIN, RoleId.ASSASSIN, RoleId.PERCIVAL),
-            selectedVoicePack = VoicePackId.DRAMATIC_EN,
+            selectedVoicePack = VoicePackId.WIZARD,
         )
 
         val plan = planner.plan(config)
@@ -25,7 +25,7 @@ class DefaultNarrationPlannerTest {
         assertTrue(plan.steps.isNotEmpty())
         assertTrue(plan.steps.first().stepId.startsWith("intro"))
         assertTrue(plan.steps.last().stepId.startsWith("closing"))
-        assertEquals(VoicePackId.DRAMATIC_EN, plan.voicePackId)
+        assertEquals(VoicePackId.WIZARD, plan.voicePackId)
     }
 
     @Test
@@ -141,5 +141,25 @@ class DefaultNarrationPlannerTest {
         val clipIds = plan.steps.flatMap { step -> step.clips.map { it.clipId } }
         assertTrue(ClipId.MINIONS_EXTEND_THUMB_FOR_MERLIN_EXCEPT_EVIL_SORCERER in clipIds)
         assertTrue(ClipId.MINIONS_EXTEND_THUMB_FOR_MERLIN !in clipIds)
+    }
+
+    @Test
+    fun `same setup with different voice packs yields same clip sequence`() {
+        val planner = DefaultNarrationPlanner()
+        val baseConfig = GameSetupConfig(
+            selectedRoles = setOf(RoleId.MERLIN, RoleId.PERCIVAL, RoleId.ASSASSIN, RoleId.MORGANA),
+            loyalServantAdjustment = 2,
+            minionAdjustment = 1,
+        )
+
+        val dramatic = planner.plan(baseConfig.copy(selectedVoicePack = VoicePackId.WIZARD))
+        val rainbird = planner.plan(baseConfig.copy(selectedVoicePack = VoicePackId.RAINBIRD_EN))
+
+        assertEquals(
+            dramatic.steps.flatMap { step -> step.clips.map { it.clipId } },
+            rainbird.steps.flatMap { step -> step.clips.map { it.clipId } },
+        )
+        assertEquals(VoicePackId.WIZARD, dramatic.voicePackId)
+        assertEquals(VoicePackId.RAINBIRD_EN, rainbird.voicePackId)
     }
 }

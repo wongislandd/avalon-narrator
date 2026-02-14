@@ -1,6 +1,7 @@
 package com.avalonnarrator.engine.validation
 
 import com.avalonnarrator.domain.roles.Alignment
+import com.avalonnarrator.domain.model.SetupIssueCode
 import com.avalonnarrator.domain.roles.RoleCatalog
 import com.avalonnarrator.domain.roles.RoleId
 import com.avalonnarrator.domain.setup.GameSetupConfig
@@ -18,7 +19,7 @@ class DefaultSetupValidator : SetupValidator {
         if (RoleId.PERCIVAL in effectiveRoles && RoleId.MERLIN !in effectiveRoles) {
             issues += SetupIssue(
                 level = SetupIssueLevel.WARNING,
-                code = "PERCIVAL_WITHOUT_MERLIN",
+                code = SetupIssueCode.PERCIVAL_WITHOUT_MERLIN,
                 message = "Percival is selected without Merlin, so Percival loses core information value.",
                 affectedRoles = setOf(RoleId.PERCIVAL, RoleId.MERLIN),
             )
@@ -27,7 +28,7 @@ class DefaultSetupValidator : SetupValidator {
         if (RoleId.MORGANA in effectiveRoles && RoleId.PERCIVAL !in effectiveRoles) {
             issues += SetupIssue(
                 level = SetupIssueLevel.WARNING,
-                code = "MORGANA_WITHOUT_PERCIVAL",
+                code = SetupIssueCode.MORGANA_WITHOUT_PERCIVAL,
                 message = "Morgana is selected without Percival, reducing Morgana's deception impact.",
                 affectedRoles = setOf(RoleId.MORGANA, RoleId.PERCIVAL),
             )
@@ -36,7 +37,7 @@ class DefaultSetupValidator : SetupValidator {
         if (RoleId.MERLIN in effectiveRoles && RoleId.ASSASSIN !in effectiveRoles) {
             issues += SetupIssue(
                 level = SetupIssueLevel.WARNING,
-                code = "MERLIN_WITHOUT_ASSASSIN",
+                code = SetupIssueCode.MERLIN_WITHOUT_ASSASSIN,
                 message = "Merlin is selected without Assassin, lowering late-game tension.",
                 affectedRoles = setOf(RoleId.MERLIN, RoleId.ASSASSIN),
             )
@@ -47,7 +48,7 @@ class DefaultSetupValidator : SetupValidator {
         if (hasGoodLancelot.xor(hasEvilLancelot)) {
             issues += SetupIssue(
                 level = SetupIssueLevel.ERROR,
-                code = "LANCELOT_PAIR_REQUIRED",
+                code = SetupIssueCode.LANCELOT_PAIR_REQUIRED,
                 message = "Lancelot roles must be used as a pair (Good Lancelot + Evil Lancelot).",
                 affectedRoles = setOf(RoleId.LANCELOT_GOOD, RoleId.LANCELOT_EVIL),
             )
@@ -60,7 +61,7 @@ class DefaultSetupValidator : SetupValidator {
         if (messengerCount in 1..2) {
             issues += SetupIssue(
                 level = SetupIssueLevel.ERROR,
-                code = "MESSENGER_TRIO_REQUIRED",
+                code = SetupIssueCode.MESSENGER_TRIO_REQUIRED,
                 message = "Messenger module requires all three roles: Senior Messenger, Junior Messenger, and Evil Messenger.",
                 affectedRoles = setOf(RoleId.SENIOR_MESSENGER, RoleId.JUNIOR_MESSENGER, RoleId.EVIL_MESSENGER),
             )
@@ -71,7 +72,7 @@ class DefaultSetupValidator : SetupValidator {
         if (hasGoodRogue.xor(hasEvilRogue)) {
             issues += SetupIssue(
                 level = SetupIssueLevel.ERROR,
-                code = "ROGUE_PAIR_REQUIRED",
+                code = SetupIssueCode.ROGUE_PAIR_REQUIRED,
                 message = "Rogue module requires both roles: Good Rogue and Evil Rogue.",
                 affectedRoles = setOf(RoleId.ROGUE_GOOD, RoleId.ROGUE_EVIL),
             )
@@ -82,7 +83,7 @@ class DefaultSetupValidator : SetupValidator {
         if (hasGoodSorcerer.xor(hasEvilSorcerer)) {
             issues += SetupIssue(
                 level = SetupIssueLevel.ERROR,
-                code = "SORCERER_PAIR_REQUIRED",
+                code = SetupIssueCode.SORCERER_PAIR_REQUIRED,
                 message = "Sorcerer module requires both roles: Good Sorcerer and Evil Sorcerer.",
                 affectedRoles = setOf(RoleId.SORCERER_GOOD, RoleId.SORCERER_EVIL),
             )
@@ -99,7 +100,7 @@ class DefaultSetupValidator : SetupValidator {
             val expectedGoodCount = totalAssigned - expectedEvilCount
             issues += SetupIssue(
                 level = SetupIssueLevel.ERROR,
-                code = "TEAM_RATIO_INVALID",
+                code = SetupIssueCode.TEAM_RATIO_INVALID,
                 message = "Invalid team ratio for $totalAssigned players: selected $goodCount good / $evilCount evil, expected $expectedGoodCount good / $expectedEvilCount evil.",
             )
         }
@@ -107,7 +108,7 @@ class DefaultSetupValidator : SetupValidator {
         if (totalAssigned < 5) {
             issues += SetupIssue(
                 level = SetupIssueLevel.ERROR,
-                code = "MIN_PLAYERS_NOT_MET",
+                code = SetupIssueCode.MIN_PLAYERS_NOT_MET,
                 message = "Select at least 5 characters to start a game.",
             )
         }
@@ -115,7 +116,7 @@ class DefaultSetupValidator : SetupValidator {
         if (totalAssigned > 10) {
             issues += SetupIssue(
                 level = SetupIssueLevel.ERROR,
-                code = "MAX_PLAYERS_EXCEEDED",
+                code = SetupIssueCode.MAX_PLAYERS_EXCEEDED,
                 message = "Avalon supports up to 10 players.",
             )
         }

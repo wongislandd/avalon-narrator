@@ -7,7 +7,7 @@ import com.avalonnarrator.domain.setup.GameModule
 object StandardNarrationRules {
     val steps: List<RuleStepDefinition> = listOf(
         ruleStep(id = "intro", phase = RulePhase.PRELUDE, order = 0) {
-            clips(ClipId.INTRO, ClipId.CLOSE_EYES, ClipId.HANDS_IN_FISTS)
+            clips(ClipId.INTRO, ClipId.CLOSE_EYES)
             baseDelayMs(1400)
         },
         ruleStep(id = "cleric_alignment_check", phase = RulePhase.PRELUDE, order = 5) {

@@ -10,8 +10,6 @@ object RosterBuilder {
         val goodSlots: Int,
         val evilSlots: Int,
         val selectedSpecialRoles: Set<RoleId>,
-        val autoLoyalServantCount: Int,
-        val autoMinionCount: Int,
         val loyalServantCount: Int,
         val minionCount: Int,
         val effectiveRoles: Set<RoleId>,
@@ -23,10 +21,6 @@ object RosterBuilder {
         val selectedSpecialRoles = config.selectedRoles.filter { it in selectableRoleIds() }.toSet()
         val evilSlots = expectedEvilCount(config.playerCount) ?: 0
         val goodSlots = (config.playerCount - evilSlots).coerceAtLeast(0)
-
-        // Base-role quantities are user-controlled and independent from special role picks.
-        val autoLoyalServantCount = 0
-        val autoMinionCount = 0
 
         val loyalServantCount = config.loyalServantAdjustment.coerceIn(0, 12)
         val minionCount = config.minionAdjustment.coerceIn(0, 12)
@@ -42,8 +36,6 @@ object RosterBuilder {
             goodSlots = goodSlots,
             evilSlots = evilSlots,
             selectedSpecialRoles = selectedSpecialRoles,
-            autoLoyalServantCount = autoLoyalServantCount,
-            autoMinionCount = autoMinionCount,
             loyalServantCount = loyalServantCount,
             minionCount = minionCount,
             effectiveRoles = effectiveRoles,

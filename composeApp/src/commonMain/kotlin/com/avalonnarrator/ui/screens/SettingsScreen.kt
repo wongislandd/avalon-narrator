@@ -32,23 +32,17 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.avalonnarrator.app.AvalonUiState
-import com.avalonnarrator.domain.setup.GameModule
 import com.avalonnarrator.domain.setup.NarrationPace
+import com.avalonnarrator.presentation.settings.SettingsUiEvent
+import com.avalonnarrator.presentation.settings.SettingsUiState
 
 @Composable
 fun SettingsScreen(
-    uiState: AvalonUiState,
-    onBack: () -> Unit,
-    onToggleModule: (GameModule) -> Unit,
-    onValidatorsChanged: (Boolean) -> Unit,
-    onPaceChanged: (NarrationPace) -> Unit,
-    onRegenerateSeed: () -> Unit,
-    onVoicePackChanged: (com.avalonnarrator.domain.audio.VoicePackId) -> Unit,
-    onNarrationRemindersChanged: (Boolean) -> Unit,
-    onDebugTimelineChanged: (Boolean) -> Unit,
+    uiState: SettingsUiState,
+    onEvent: (SettingsUiEvent) -> Unit,
 ) {
     val config = uiState.config
+    val selectedVoicePack = uiState.availableVoicePacks.firstOrNull { it.id == config.selectedVoicePack }
 
     Box(
         modifier = Modifier
@@ -101,34 +95,15 @@ fun SettingsScreen(
 
             Spacer(Modifier.height(14.dp))
             ModuleRow(
-                label = "Enable Setup Validators",
+                label = "Enforce game rules",
+                description = "When toggled on, the app will strictly enforce game mechanics. Turn off if playing with custom rules.",
                 checked = config.validatorsEnabled,
-                onCheckedChange = onValidatorsChanged,
-            )
-
-            Spacer(Modifier.height(16.dp))
-            SectionTitle("Modules")
-            Spacer(Modifier.height(6.dp))
-            ModuleRow(
-                label = "Excalibur",
-                checked = GameModule.EXCALIBUR in config.enabledModules,
-                onCheckedChange = { onToggleModule(GameModule.EXCALIBUR) },
-            )
-            ModuleRow(
-                label = "Lady of the Lake",
-                checked = GameModule.LADY_OF_LAKE in config.enabledModules,
-                onCheckedChange = { onToggleModule(GameModule.LADY_OF_LAKE) },
-            )
-            Text(
-                text = "Lancelot module is inferred when Lancelot roles are selected.",
-                style = MaterialTheme.typography.bodySmall,
-                color = Color(0xFFE6D3B2),
-                modifier = Modifier.padding(top = 6.dp, start = 4.dp, end = 4.dp),
+                onCheckedChange = { onEvent(SettingsUiEvent.ToggleValidators(it)) },
             )
 
             Spacer(Modifier.height(16.dp))
             SectionTitle("Narration Pace")
-            Spacer(Modifier.height(6.dp))
+            Spacer(Modifier.height(10.dp))
             Surface(
                 shape = RoundedCornerShape(14.dp),
                 color = Color(0x5C291A0F),
@@ -146,7 +121,7 @@ fun SettingsScreen(
                         ) {
                             RadioButton(
                                 selected = pace == config.narrationPace,
-                                onClick = { onPaceChanged(pace) },
+                                onClick = { onEvent(SettingsUiEvent.SetPace(pace)) },
                                 colors = RadioButtonDefaults.colors(
                                     selectedColor = Color(0xFFE6C374),
                                     unselectedColor = Color(0xFFB79A67),
@@ -163,7 +138,7 @@ fun SettingsScreen(
 
             Spacer(Modifier.height(16.dp))
             SectionTitle("Voice Pack")
-            Spacer(Modifier.height(6.dp))
+            Spacer(Modifier.height(10.dp))
             Surface(
                 shape = RoundedCornerShape(14.dp),
                 color = Color(0x5C291A0F),
@@ -171,24 +146,28 @@ fun SettingsScreen(
                     .fillMaxWidth()
                     .border(1.dp, Color(0x66D5AA62), RoundedCornerShape(14.dp)),
             ) {
-                Column(Modifier.padding(vertical = 6.dp)) {
-                    uiState.availableVoicePacks.forEach { voicePack ->
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 8.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            RadioButton(
-                                selected = voicePack.id == config.selectedVoicePack,
-                                onClick = { onVoicePackChanged(voicePack.id) },
-                                colors = RadioButtonDefaults.colors(
-                                    selectedColor = Color(0xFFE6C374),
-                                    unselectedColor = Color(0xFFB79A67),
-                                ),
-                            )
-                            Text(voicePack.displayName, color = Color(0xFFFFEBC0))
-                        }
+                Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(
+                        text = "Selected: ${selectedVoicePack?.displayName ?: config.selectedVoicePack.name}",
+                        color = Color(0xFFFFEBC0),
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.SemiBold,
+                    )
+                    if (!selectedVoicePack?.description.isNullOrBlank()) {
+                        Text(
+                            selectedVoicePack?.description.orEmpty(),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Color(0xFFE6D3B2),
+                        )
+                    }
+                    Button(
+                        onClick = { onEvent(SettingsUiEvent.OpenVoiceSelection) },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFF9C7A35),
+                            contentColor = Color(0xFFFFF3D6),
+                        ),
+                    ) {
+                        Text("Open Voice Selection")
                     }
                 }
             }
@@ -206,7 +185,7 @@ fun SettingsScreen(
                     )
                     Spacer(Modifier.height(8.dp))
                     Button(
-                        onClick = onRegenerateSeed,
+                        onClick = { onEvent(SettingsUiEvent.RegenerateSeed) },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color(0xFF9C7A35),
                             contentColor = Color(0xFFFFF3D6),
@@ -221,19 +200,19 @@ fun SettingsScreen(
             ModuleRow(
                 label = "Include Role Reminders",
                 checked = config.narrationRemindersEnabled,
-                onCheckedChange = onNarrationRemindersChanged,
+                onCheckedChange = { onEvent(SettingsUiEvent.ToggleReminders(it)) },
             )
 
             Spacer(Modifier.height(10.dp))
             ModuleRow(
                 label = "Show Debug Timeline",
                 checked = config.debugTimelineEnabled,
-                onCheckedChange = onDebugTimelineChanged,
+                onCheckedChange = { onEvent(SettingsUiEvent.ToggleDebugTimeline(it)) },
             )
 
             Spacer(Modifier.height(20.dp))
             Button(
-                onClick = onBack,
+                onClick = { onEvent(SettingsUiEvent.Back) },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xFF9C7A35),
                     contentColor = Color(0xFFFFF3D6),
@@ -259,6 +238,7 @@ private fun SectionTitle(text: String) {
 @Composable
 private fun ModuleRow(
     label: String,
+    description: String? = null,
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
 ) {
@@ -276,7 +256,21 @@ private fun ModuleRow(
                 .fillMaxWidth()
                 .padding(horizontal = 12.dp, vertical = 8.dp),
         ) {
-            Text(label, color = Color(0xFFFFEBC0))
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(end = 12.dp),
+                verticalArrangement = Arrangement.spacedBy(2.dp),
+            ) {
+                Text(label, color = Color(0xFFFFEBC0))
+                if (!description.isNullOrBlank()) {
+                    Text(
+                        text = description,
+                        color = Color(0xFFE6D3B2),
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                }
+            }
             Switch(
                 checked = checked,
                 onCheckedChange = onCheckedChange,

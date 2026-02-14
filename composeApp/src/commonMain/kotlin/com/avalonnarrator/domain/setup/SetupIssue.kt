@@ -1,5 +1,6 @@
 package com.avalonnarrator.domain.setup
 
+import com.avalonnarrator.domain.model.SetupIssueCode
 import com.avalonnarrator.domain.roles.RoleId
 
 enum class SetupIssueLevel {
@@ -10,7 +11,7 @@ enum class SetupIssueLevel {
 
 data class SetupIssue(
     val level: SetupIssueLevel,
-    val code: String,
+    val code: SetupIssueCode,
     val message: String,
     val affectedRoles: Set<RoleId> = emptySet(),
 )

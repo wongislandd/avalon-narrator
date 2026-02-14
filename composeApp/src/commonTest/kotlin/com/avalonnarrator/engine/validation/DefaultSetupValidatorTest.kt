@@ -1,6 +1,7 @@
 package com.avalonnarrator.engine.validation
 
 import com.avalonnarrator.domain.roles.RoleId
+import com.avalonnarrator.domain.model.SetupIssueCode
 import com.avalonnarrator.domain.setup.GameSetupConfig
 import com.avalonnarrator.domain.setup.SetupIssueLevel
 import kotlin.test.Test
@@ -17,7 +18,7 @@ class DefaultSetupValidatorTest {
             GameSetupConfig(selectedRoles = setOf(RoleId.PERCIVAL, RoleId.ASSASSIN)),
         )
 
-        val issue = issues.firstOrNull { it.code == "PERCIVAL_WITHOUT_MERLIN" }
+        val issue = issues.firstOrNull { it.code == SetupIssueCode.PERCIVAL_WITHOUT_MERLIN }
         assertTrue(issue != null)
         assertEquals(SetupIssueLevel.WARNING, issue.level)
     }
@@ -28,7 +29,7 @@ class DefaultSetupValidatorTest {
             GameSetupConfig(selectedRoles = setOf(RoleId.LANCELOT_GOOD, RoleId.ASSASSIN)),
         )
 
-        val issue = issues.firstOrNull { it.code == "LANCELOT_PAIR_REQUIRED" }
+        val issue = issues.firstOrNull { it.code == SetupIssueCode.LANCELOT_PAIR_REQUIRED }
         assertTrue(issue != null)
         assertEquals(SetupIssueLevel.ERROR, issue.level)
     }
@@ -39,7 +40,7 @@ class DefaultSetupValidatorTest {
             GameSetupConfig(selectedRoles = setOf(RoleId.SENIOR_MESSENGER, RoleId.ASSASSIN)),
         )
 
-        val issue = issues.firstOrNull { it.code == "MESSENGER_TRIO_REQUIRED" }
+        val issue = issues.firstOrNull { it.code == SetupIssueCode.MESSENGER_TRIO_REQUIRED }
         assertTrue(issue != null)
         assertEquals(SetupIssueLevel.ERROR, issue.level)
     }
@@ -50,7 +51,7 @@ class DefaultSetupValidatorTest {
             GameSetupConfig(selectedRoles = setOf(RoleId.ROGUE_EVIL, RoleId.ASSASSIN)),
         )
 
-        val issue = issues.firstOrNull { it.code == "ROGUE_PAIR_REQUIRED" }
+        val issue = issues.firstOrNull { it.code == SetupIssueCode.ROGUE_PAIR_REQUIRED }
         assertTrue(issue != null)
         assertEquals(SetupIssueLevel.ERROR, issue.level)
     }
@@ -61,7 +62,7 @@ class DefaultSetupValidatorTest {
             GameSetupConfig(selectedRoles = setOf(RoleId.SORCERER_EVIL, RoleId.ASSASSIN)),
         )
 
-        val issue = issues.firstOrNull { it.code == "SORCERER_PAIR_REQUIRED" }
+        val issue = issues.firstOrNull { it.code == SetupIssueCode.SORCERER_PAIR_REQUIRED }
         assertTrue(issue != null)
         assertEquals(SetupIssueLevel.ERROR, issue.level)
     }
@@ -84,9 +85,9 @@ class DefaultSetupValidatorTest {
             ),
         )
 
-        assertTrue(issues.none { it.code == "MESSENGER_TRIO_REQUIRED" })
-        assertTrue(issues.none { it.code == "ROGUE_PAIR_REQUIRED" })
-        assertTrue(issues.none { it.code == "SORCERER_PAIR_REQUIRED" })
+        assertTrue(issues.none { it.code == SetupIssueCode.MESSENGER_TRIO_REQUIRED })
+        assertTrue(issues.none { it.code == SetupIssueCode.ROGUE_PAIR_REQUIRED })
+        assertTrue(issues.none { it.code == SetupIssueCode.SORCERER_PAIR_REQUIRED })
     }
 
     @Test
@@ -100,7 +101,7 @@ class DefaultSetupValidatorTest {
             ),
         )
 
-        val issue = issues.firstOrNull { it.code == "MIN_PLAYERS_NOT_MET" }
+        val issue = issues.firstOrNull { it.code == SetupIssueCode.MIN_PLAYERS_NOT_MET }
         assertTrue(issue != null)
         assertEquals(SetupIssueLevel.ERROR, issue.level)
     }
@@ -124,7 +125,7 @@ class DefaultSetupValidatorTest {
             ),
         )
 
-        val issue = issues.firstOrNull { it.code == "MAX_PLAYERS_EXCEEDED" }
+        val issue = issues.firstOrNull { it.code == SetupIssueCode.MAX_PLAYERS_EXCEEDED }
         assertTrue(issue != null)
         assertEquals(SetupIssueLevel.ERROR, issue.level)
     }
@@ -139,7 +140,7 @@ class DefaultSetupValidatorTest {
             ),
         )
 
-        val issue = issues.firstOrNull { it.code == "TEAM_RATIO_INVALID" }
+        val issue = issues.firstOrNull { it.code == SetupIssueCode.TEAM_RATIO_INVALID }
         assertTrue(issue != null)
         assertEquals(SetupIssueLevel.ERROR, issue.level)
     }
@@ -154,6 +155,6 @@ class DefaultSetupValidatorTest {
             ),
         )
 
-        assertTrue(issues.none { it.code == "TEAM_RATIO_INVALID" })
+        assertTrue(issues.none { it.code == SetupIssueCode.TEAM_RATIO_INVALID })
     }
 }

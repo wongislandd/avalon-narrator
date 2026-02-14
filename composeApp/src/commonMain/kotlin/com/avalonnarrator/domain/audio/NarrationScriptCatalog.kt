@@ -3,7 +3,7 @@ package com.avalonnarrator.domain.audio
 object NarrationScriptCatalog {
     private val thematicLines: Map<ClipId, String> = mapOf(
         ClipId.INTRO to "Welcome to Avalon.",
-        ClipId.CLOSE_EYES to "Everyone, close your eyes.",
+        ClipId.CLOSE_EYES to "Everyone, close your eyes and make a fist in front of you.",
         ClipId.HANDS_IN_FISTS to "Make a fist in front of you.",
         ClipId.CLERIC_LEADER_EVIL_THUMB to "Leader, if you are evil, extend your thumb now.",
         ClipId.CLERIC_OPEN_EYES to "Cleric, open your eyes.",

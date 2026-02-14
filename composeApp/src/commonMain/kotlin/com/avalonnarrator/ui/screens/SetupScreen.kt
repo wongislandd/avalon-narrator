@@ -1,6 +1,7 @@
 package com.avalonnarrator.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,48 +27,30 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.avalonnarrator.app.AvalonUiState
-import com.avalonnarrator.domain.roles.RoleDefinition
 import com.avalonnarrator.domain.roles.RoleId
-import com.avalonnarrator.domain.setup.RosterBuilder
-import com.avalonnarrator.domain.setup.SetupIssueLevel
+import com.avalonnarrator.domain.setup.GameModule
+import com.avalonnarrator.presentation.setup.SetupUiEvent
+import com.avalonnarrator.presentation.setup.SetupUiState
 import com.avalonnarrator.ui.components.HolographicRolePreviewCard
 import com.avalonnarrator.ui.components.RoleCard
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun SetupScreen(
-    uiState: AvalonUiState,
-    onToggleRole: (RoleId) -> Unit,
-    onIncreaseLoyalServants: () -> Unit,
-    onDecreaseLoyalServants: () -> Unit,
-    onIncreaseMinions: () -> Unit,
-    onDecreaseMinions: () -> Unit,
-    onToggleLoyalServantSelection: () -> Unit,
-    onToggleMinionSelection: () -> Unit,
-    onOpenSettings: () -> Unit,
-    onStartRun: () -> Unit,
+    uiState: SetupUiState,
+    onEvent: (SetupUiEvent) -> Unit,
 ) {
     val contentSidePadding = 16.dp
-    var previewRole by remember { mutableStateOf<RoleDefinition?>(null) }
-    val roster = RosterBuilder.build(uiState.config)
-    val selectedCardsCount = uiState.config.selectedRoles.size + roster.loyalServantCount + roster.minionCount
-    val blockingIssueCodes = setOf("MIN_PLAYERS_NOT_MET", "MAX_PLAYERS_EXCEEDED", "LANCELOT_PAIR_REQUIRED")
-    val blockingIssues = uiState.issues.filter { it.level == SetupIssueLevel.ERROR || it.code in blockingIssueCodes }
-    val nonBlockingIssues = uiState.issues.filterNot { it.level == SetupIssueLevel.ERROR || it.code in blockingIssueCodes }
-    val canStartNarration = blockingIssues.isEmpty()
 
     Box(
         modifier = Modifier
@@ -103,7 +86,7 @@ fun SetupScreen(
                     color = Color(0x5C291A0F),
                     modifier = Modifier.size(44.dp),
                 ) {
-                    IconButton(onClick = onOpenSettings) {
+                    IconButton(onClick = { onEvent(SetupUiEvent.OpenSettings) }) {
                         Icon(
                             imageVector = Icons.Filled.Settings,
                             contentDescription = "Settings",
@@ -131,7 +114,7 @@ fun SetupScreen(
                     color = Color(0x5C291A0F),
                 ) {
                     Text(
-                        text = selectedCardsCount.toString(),
+                        text = uiState.selectedCardsCount.toString(),
                         style = MaterialTheme.typography.titleMedium,
                         color = Color(0xFFFFF3D6),
                         fontWeight = FontWeight.SemiBold,
@@ -141,8 +124,8 @@ fun SetupScreen(
             }
             Spacer(Modifier.height(10.dp))
             Button(
-                onClick = onStartRun,
-                enabled = canStartNarration,
+                onClick = { onEvent(SetupUiEvent.StartNarration) },
+                enabled = uiState.canStartNarration,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(0xFF9C7A35),
                     contentColor = Color(0xFFFFF3D6),
@@ -153,10 +136,10 @@ fun SetupScreen(
                     .fillMaxWidth()
                     .padding(horizontal = contentSidePadding),
             ) {
-                Text(if (canStartNarration) "Start Narration" else "Fix Errors To Start")
+                Text(if (uiState.canStartNarration) "Start Narration" else "Fix Errors To Start")
             }
             Spacer(Modifier.height(14.dp))
-            if (blockingIssues.isNotEmpty()) {
+            if (uiState.blockingIssues.isNotEmpty()) {
                 Surface(
                     shape = RoundedCornerShape(10.dp),
                     color = Color(0xFF6F1F1A).copy(alpha = 0.92f),
@@ -165,14 +148,14 @@ fun SetupScreen(
                         .padding(horizontal = contentSidePadding),
                 ) {
                     Column(Modifier.padding(10.dp)) {
-                        blockingIssues.forEach { issue ->
+                        uiState.blockingIssues.forEach { issue ->
                             Text(text = "• ${issue.message}", color = Color(0xFFFFD9D3))
                         }
                     }
                 }
                 Spacer(Modifier.height(10.dp))
             }
-            if (nonBlockingIssues.isNotEmpty()) {
+            if (uiState.nonBlockingIssues.isNotEmpty()) {
                 Surface(
                     shape = RoundedCornerShape(10.dp),
                     color = Color(0x665A3C1C),
@@ -181,7 +164,7 @@ fun SetupScreen(
                         .padding(horizontal = contentSidePadding),
                 ) {
                     Column(Modifier.padding(10.dp)) {
-                        nonBlockingIssues.forEach { issue ->
+                        uiState.nonBlockingIssues.forEach { issue ->
                             Text(text = "• ${issue.message}", color = Color(0xFFF3DFBF))
                         }
                     }
@@ -189,6 +172,34 @@ fun SetupScreen(
                 Spacer(Modifier.height(14.dp))
             }
 
+            Text(
+                text = "Modules",
+                style = MaterialTheme.typography.titleMedium,
+                color = Color(0xFFFFE4A9),
+                modifier = Modifier.padding(horizontal = contentSidePadding),
+            )
+            Spacer(Modifier.height(8.dp))
+            ModuleToggleRow(
+                label = "Excalibur",
+                checked = GameModule.EXCALIBUR in uiState.config.enabledModules,
+                onCheckedChange = { onEvent(SetupUiEvent.ToggleModule(GameModule.EXCALIBUR)) },
+                modifier = Modifier.padding(horizontal = contentSidePadding),
+            )
+            Spacer(Modifier.height(8.dp))
+            ModuleToggleRow(
+                label = "Lady of the Lake",
+                checked = GameModule.LADY_OF_LAKE in uiState.config.enabledModules,
+                onCheckedChange = { onEvent(SetupUiEvent.ToggleModule(GameModule.LADY_OF_LAKE)) },
+                modifier = Modifier.padding(horizontal = contentSidePadding),
+            )
+            Text(
+                text = "Lancelot is inferred when Lancelot roles are selected.",
+                style = MaterialTheme.typography.bodySmall,
+                color = Color(0xFFE6D3B2),
+                modifier = Modifier.padding(top = 6.dp, start = contentSidePadding + 4.dp, end = contentSidePadding + 4.dp),
+            )
+
+            Spacer(Modifier.height(16.dp))
             Text(
                 text = "Loyal Servants of Arthur",
                 style = MaterialTheme.typography.titleMedium,
@@ -206,29 +217,33 @@ fun SetupScreen(
             ) {
                 uiState.goodRoles.forEach { role ->
                     val isLoyalServant = role.id == RoleId.LOYAL_SERVANT
-                    val quantity = if (isLoyalServant) roster.loyalServantCount else null
+                    val quantity = if (isLoyalServant) uiState.loyalServantCount else null
                     RoleCard(
                         role = role,
                         selected = if (isLoyalServant) (quantity ?: 0) > 0 else role.id in uiState.config.selectedRoles,
                         onToggle = {
                             if (isLoyalServant) {
-                                onToggleLoyalServantSelection()
+                                onEvent(SetupUiEvent.ToggleBaseRole(RoleId.LOYAL_SERVANT))
                             } else {
-                                onToggleRole(role.id)
+                                onEvent(SetupUiEvent.ToggleRole(role.id))
                             }
                         },
-                        onPreviewStart = { previewRole = role },
-                        onPreviewEnd = { previewRole = null },
+                        onPreviewStart = { onEvent(SetupUiEvent.ShowRolePreview(role)) },
+                        onPreviewEnd = { onEvent(SetupUiEvent.HideRolePreview) },
                         showQuantityControls = isLoyalServant && (quantity ?: 0) > 0,
                         quantity = quantity,
                         onDecreaseQuantity = if (isLoyalServant) {
                             {
-                                onDecreaseLoyalServants()
+                                onEvent(SetupUiEvent.DecreaseBaseRole(RoleId.LOYAL_SERVANT))
                             }
                         } else {
                             null
                         },
-                        onIncreaseQuantity = if (isLoyalServant) onIncreaseLoyalServants else null,
+                        onIncreaseQuantity = if (isLoyalServant) {
+                            { onEvent(SetupUiEvent.IncreaseBaseRole(RoleId.LOYAL_SERVANT)) }
+                        } else {
+                            null
+                        },
                     )
                 }
             }
@@ -251,29 +266,33 @@ fun SetupScreen(
             ) {
                 uiState.evilRoles.forEach { role ->
                     val isMinion = role.id == RoleId.MINION
-                    val quantity = if (isMinion) roster.minionCount else null
+                    val quantity = if (isMinion) uiState.minionCount else null
                     RoleCard(
                         role = role,
                         selected = if (isMinion) (quantity ?: 0) > 0 else role.id in uiState.config.selectedRoles,
                         onToggle = {
                             if (isMinion) {
-                                onToggleMinionSelection()
+                                onEvent(SetupUiEvent.ToggleBaseRole(RoleId.MINION))
                             } else {
-                                onToggleRole(role.id)
+                                onEvent(SetupUiEvent.ToggleRole(role.id))
                             }
                         },
-                        onPreviewStart = { previewRole = role },
-                        onPreviewEnd = { previewRole = null },
+                        onPreviewStart = { onEvent(SetupUiEvent.ShowRolePreview(role)) },
+                        onPreviewEnd = { onEvent(SetupUiEvent.HideRolePreview) },
                         showQuantityControls = isMinion && (quantity ?: 0) > 0,
                         quantity = quantity,
                         onDecreaseQuantity = if (isMinion) {
                             {
-                                onDecreaseMinions()
+                                onEvent(SetupUiEvent.DecreaseBaseRole(RoleId.MINION))
                             }
                         } else {
                             null
                         },
-                        onIncreaseQuantity = if (isMinion) onIncreaseMinions else null,
+                        onIncreaseQuantity = if (isMinion) {
+                            { onEvent(SetupUiEvent.IncreaseBaseRole(RoleId.MINION)) }
+                        } else {
+                            null
+                        },
                     )
                 }
             }
@@ -281,7 +300,7 @@ fun SetupScreen(
             Spacer(Modifier.height(24.dp))
         }
 
-        previewRole?.let { role ->
+        uiState.previewRole?.let { role ->
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -300,6 +319,42 @@ fun SetupScreen(
                     )
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun ModuleToggleRow(
+    label: String,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Surface(
+        shape = RoundedCornerShape(14.dp),
+        color = Color(0x5C291A0F),
+        modifier = modifier
+            .fillMaxWidth()
+            .border(1.dp, Color(0x66D5AA62), RoundedCornerShape(14.dp)),
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp, vertical = 8.dp),
+        ) {
+            Text(label, color = Color(0xFFFFEBC0))
+            Switch(
+                checked = checked,
+                onCheckedChange = onCheckedChange,
+                colors = SwitchDefaults.colors(
+                    checkedThumbColor = Color(0xFFFFF3D6),
+                    checkedTrackColor = Color(0xFF9C7A35),
+                    uncheckedThumbColor = Color(0xFFD4BE95),
+                    uncheckedTrackColor = Color(0x66443322),
+                ),
+            )
         }
     }
 }

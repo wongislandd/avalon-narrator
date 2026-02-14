@@ -26,7 +26,7 @@ class SettingsSetupStoreTest {
             enabledModules = setOf(GameModule.EXCALIBUR),
             narrationPace = NarrationPace.FAST,
             randomSeed = 123L,
-            selectedVoicePack = VoicePackId.DRAMATIC_EN,
+            selectedVoicePack = VoicePackId.WIZARD,
             narrationRemindersEnabled = true,
             debugTimelineEnabled = true,
         )

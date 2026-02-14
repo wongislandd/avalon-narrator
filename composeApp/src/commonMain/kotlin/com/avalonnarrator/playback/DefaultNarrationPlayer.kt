@@ -111,7 +111,7 @@ class DefaultNarrationPlayer(
     }
 
     companion object {
-        private const val DEFAULT_BACKTRACK_ASSET_PATH = "audio/backtrack/camelot_theme.mp3"
+        private const val DEFAULT_BACKTRACK_ASSET_PATH = "audio/backtrack/the_uncertain_quest.mp3"
         private const val DEFAULT_BACKTRACK_VOLUME = 0.22f
     }
 }

@@ -13,17 +13,17 @@ class DefaultClipResolverTest {
 
     @Test
     fun `resolves clip from selected voice pack`() {
-        val resolution = resolver.resolve(ClipId.INTRO, VoicePackId.DRAMATIC_EN)
+        val resolution = resolver.resolve(ClipId.INTRO, VoicePackId.WIZARD)
         val found = assertIs<ClipResolution.Found>(resolution)
-        assertEquals(VoicePackId.DRAMATIC_EN, found.clip.sourceVoicePack)
+        assertEquals(VoicePackId.WIZARD, found.clip.sourceVoicePack)
         assertTrue(!found.clip.usedFallback)
     }
 
     @Test
     fun `resolves lady of the lake from dramatic pack when available`() {
-        val resolution = resolver.resolve(ClipId.LADY_OF_LAKE, VoicePackId.DRAMATIC_EN)
+        val resolution = resolver.resolve(ClipId.LADY_OF_LAKE, VoicePackId.WIZARD)
         val found = assertIs<ClipResolution.Found>(resolution)
-        assertEquals(VoicePackId.DRAMATIC_EN, found.clip.sourceVoicePack)
+        assertEquals(VoicePackId.WIZARD, found.clip.sourceVoicePack)
         assertTrue(!found.clip.usedFallback)
     }
 
