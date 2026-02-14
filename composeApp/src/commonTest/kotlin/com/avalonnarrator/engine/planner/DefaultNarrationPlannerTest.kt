@@ -152,14 +152,14 @@ class DefaultNarrationPlannerTest {
             minionAdjustment = 1,
         )
 
-        val dramatic = planner.plan(baseConfig.copy(selectedVoicePack = VoicePackId.WIZARD))
+        val wizard = planner.plan(baseConfig.copy(selectedVoicePack = VoicePackId.WIZARD))
         val rainbird = planner.plan(baseConfig.copy(selectedVoicePack = VoicePackId.RAINBIRD_EN))
 
         assertEquals(
-            dramatic.steps.flatMap { step -> step.clips.map { it.clipId } },
+            wizard.steps.flatMap { step -> step.clips.map { it.clipId } },
             rainbird.steps.flatMap { step -> step.clips.map { it.clipId } },
         )
-        assertEquals(VoicePackId.WIZARD, dramatic.voicePackId)
+        assertEquals(VoicePackId.WIZARD, wizard.voicePackId)
         assertEquals(VoicePackId.RAINBIRD_EN, rainbird.voicePackId)
     }
 }

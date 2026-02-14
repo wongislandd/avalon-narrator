@@ -3,12 +3,12 @@ package com.avalonnarrator.domain.audio
 object VoicePackCatalog {
     val defaultPackId: VoicePackId = VoicePackId.WIZARD
 
-    private val dramatic = VoicePackDefinition(
+    private val wizard = VoicePackDefinition(
         id = VoicePackId.WIZARD,
         displayName = "Wizard",
         description = "Deep theatrical narration with a dark-fantasy tone for full-table drama.",
         clipFiles = ClipId.entries.associateWith { clip ->
-            "audio/dramatic_en/${clip.name.lowercase()}.mp3"
+            "audio/wizard/${clip.name.lowercase()}.mp3"
         },
     )
 
@@ -22,7 +22,7 @@ object VoicePackCatalog {
     )
 
     private val packs = mapOf(
-        dramatic.id to dramatic,
+        wizard.id to wizard,
         rainbird.id to rainbird,
     )
 

@@ -20,7 +20,7 @@ class DefaultClipResolverTest {
     }
 
     @Test
-    fun `resolves lady of the lake from dramatic pack when available`() {
+    fun `resolves lady of the lake from wizard pack when available`() {
         val resolution = resolver.resolve(ClipId.LADY_OF_LAKE, VoicePackId.WIZARD)
         val found = assertIs<ClipResolution.Found>(resolution)
         assertEquals(VoicePackId.WIZARD, found.clip.sourceVoicePack)

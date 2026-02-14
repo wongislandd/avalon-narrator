@@ -27,14 +27,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.avalonnarrator.domain.roles.RoleId
@@ -43,6 +43,8 @@ import com.avalonnarrator.presentation.setup.SetupUiEvent
 import com.avalonnarrator.presentation.setup.SetupUiState
 import com.avalonnarrator.ui.components.HolographicRolePreviewCard
 import com.avalonnarrator.ui.components.RoleCard
+import kotlinx.coroutines.withTimeoutOrNull
+import androidx.compose.foundation.gestures.detectTapGestures
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -51,6 +53,22 @@ fun SetupScreen(
     onEvent: (SetupUiEvent) -> Unit,
 ) {
     val contentSidePadding = 16.dp
+    val selectedGoodCount = uiState.goodRoles.sumOf { role ->
+        if (role.id == RoleId.LOYAL_SERVANT) {
+            uiState.loyalServantCount
+        } else {
+            if (role.id in uiState.config.selectedRoles) 1 else 0
+        }
+    }
+    val selectedEvilCount = uiState.evilRoles.sumOf { role ->
+        if (role.id == RoleId.MINION) {
+            uiState.minionCount
+        } else {
+            if (role.id in uiState.config.selectedRoles) 1 else 0
+        }
+    }
+    val selectedModuleCount = listOf(GameModule.EXCALIBUR, GameModule.LADY_OF_LAKE)
+        .count { module -> module in uiState.config.enabledModules }
 
     Box(
         modifier = Modifier
@@ -173,35 +191,7 @@ fun SetupScreen(
             }
 
             Text(
-                text = "Modules",
-                style = MaterialTheme.typography.titleMedium,
-                color = Color(0xFFFFE4A9),
-                modifier = Modifier.padding(horizontal = contentSidePadding),
-            )
-            Spacer(Modifier.height(8.dp))
-            ModuleToggleRow(
-                label = "Excalibur",
-                checked = GameModule.EXCALIBUR in uiState.config.enabledModules,
-                onCheckedChange = { onEvent(SetupUiEvent.ToggleModule(GameModule.EXCALIBUR)) },
-                modifier = Modifier.padding(horizontal = contentSidePadding),
-            )
-            Spacer(Modifier.height(8.dp))
-            ModuleToggleRow(
-                label = "Lady of the Lake",
-                checked = GameModule.LADY_OF_LAKE in uiState.config.enabledModules,
-                onCheckedChange = { onEvent(SetupUiEvent.ToggleModule(GameModule.LADY_OF_LAKE)) },
-                modifier = Modifier.padding(horizontal = contentSidePadding),
-            )
-            Text(
-                text = "Lancelot is inferred when Lancelot roles are selected.",
-                style = MaterialTheme.typography.bodySmall,
-                color = Color(0xFFE6D3B2),
-                modifier = Modifier.padding(top = 6.dp, start = contentSidePadding + 4.dp, end = contentSidePadding + 4.dp),
-            )
-
-            Spacer(Modifier.height(16.dp))
-            Text(
-                text = "Loyal Servants of Arthur",
+                text = "Loyal Servants of Arthur ($selectedGoodCount)",
                 style = MaterialTheme.typography.titleMedium,
                 color = Color(0xFFE0F0FF),
                 modifier = Modifier.padding(horizontal = contentSidePadding),
@@ -250,7 +240,7 @@ fun SetupScreen(
 
             Spacer(Modifier.height(18.dp))
             Text(
-                text = "Minions of Mordred",
+                text = "Minions of Mordred ($selectedEvilCount)",
                 style = MaterialTheme.typography.titleMedium,
                 color = Color(0xFFFFD4CD),
                 modifier = Modifier.padding(horizontal = contentSidePadding),
@@ -297,64 +287,201 @@ fun SetupScreen(
                 }
             }
 
+            Spacer(Modifier.height(18.dp))
+            Text(
+                text = "Modules ($selectedModuleCount)",
+                style = MaterialTheme.typography.titleMedium,
+                color = Color(0xFFFFE4A9),
+                modifier = Modifier.padding(horizontal = contentSidePadding),
+            )
+            Spacer(Modifier.height(8.dp))
+            FlowRow(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterHorizontally),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                maxItemsInEachRow = 2,
+            ) {
+                ModuleSelectionCard(
+                    module = GameModule.EXCALIBUR,
+                    label = "Excalibur",
+                    selected = GameModule.EXCALIBUR in uiState.config.enabledModules,
+                    onToggle = { onEvent(SetupUiEvent.ToggleModule(GameModule.EXCALIBUR)) },
+                    onPreviewStart = { onEvent(SetupUiEvent.ShowModulePreview(GameModule.EXCALIBUR)) },
+                    onPreviewEnd = { onEvent(SetupUiEvent.HideModulePreview) },
+                )
+                ModuleSelectionCard(
+                    module = GameModule.LADY_OF_LAKE,
+                    label = "Lady of the Lake",
+                    selected = GameModule.LADY_OF_LAKE in uiState.config.enabledModules,
+                    onToggle = { onEvent(SetupUiEvent.ToggleModule(GameModule.LADY_OF_LAKE)) },
+                    onPreviewStart = { onEvent(SetupUiEvent.ShowModulePreview(GameModule.LADY_OF_LAKE)) },
+                    onPreviewEnd = { onEvent(SetupUiEvent.HideModulePreview) },
+                )
+            }
             Spacer(Modifier.height(24.dp))
         }
 
-        uiState.previewRole?.let { role ->
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color(0xB815100A)),
-                contentAlignment = Alignment.Center,
-            ) {
+        when {
+            uiState.previewRole != null -> {
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth(0.78f)
-                        .aspectRatio(0.71f)
-                        .padding(8.dp),
+                        .fillMaxSize()
+                        .background(Color(0xB815100A)),
+                    contentAlignment = Alignment.Center,
                 ) {
-                    HolographicRolePreviewCard(
-                        role = role,
-                        modifier = Modifier.fillMaxSize(),
-                    )
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth(0.78f)
+                            .aspectRatio(0.71f)
+                            .padding(8.dp),
+                    ) {
+                        HolographicRolePreviewCard(
+                            role = uiState.previewRole,
+                            modifier = Modifier.fillMaxSize(),
+                        )
+                    }
                 }
+            }
+
+            uiState.previewModule != null -> {
+                ModulePreviewOverlay(module = uiState.previewModule)
             }
         }
     }
 }
 
 @Composable
-private fun ModuleToggleRow(
+private fun ModuleSelectionCard(
+    module: GameModule,
     label: String,
-    checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit,
-    modifier: Modifier = Modifier,
+    selected: Boolean,
+    onToggle: () -> Unit,
+    onPreviewStart: () -> Unit,
+    onPreviewEnd: () -> Unit,
 ) {
-    Surface(
-        shape = RoundedCornerShape(14.dp),
-        color = Color(0x5C291A0F),
-        modifier = modifier
-            .fillMaxWidth()
-            .border(1.dp, Color(0x66D5AA62), RoundedCornerShape(14.dp)),
+    val borderColor = if (selected) Color(0xFFFFE8AA) else Color(0xFF6D5631)
+    val backgroundBrush = if (selected) {
+        Brush.verticalGradient(listOf(Color(0xFF8A6430), Color(0xFF2A1B10)))
+    } else {
+        Brush.verticalGradient(listOf(Color(0xFF4A3A22), Color(0xFF24170E)))
+    }
+
+    Box(
+        modifier = Modifier
+            .pointerInput(module) {
+                detectTapGestures(
+                    onTap = { onToggle() },
+                    onPress = {
+                        val releasedBeforeLongPress = withTimeoutOrNull(viewConfiguration.longPressTimeoutMillis.toLong()) {
+                            tryAwaitRelease()
+                        } ?: false
+                        if (!releasedBeforeLongPress) {
+                            onPreviewStart()
+                            tryAwaitRelease()
+                            onPreviewEnd()
+                        }
+                    },
+                )
+            }
+            .size(width = 148.dp, height = 168.dp)
+            .clip(RoundedCornerShape(18.dp))
+            .background(backgroundBrush)
+            .border(
+                width = if (selected) 3.dp else 1.dp,
+                color = borderColor,
+                shape = RoundedCornerShape(18.dp),
+            ),
     ) {
-        Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 12.dp, vertical = 8.dp),
+                .align(Alignment.TopCenter)
+                .padding(top = 16.dp),
+            contentAlignment = Alignment.Center,
         ) {
-            Text(label, color = Color(0xFFFFEBC0))
-            Switch(
-                checked = checked,
-                onCheckedChange = onCheckedChange,
-                colors = SwitchDefaults.colors(
-                    checkedThumbColor = Color(0xFFFFF3D6),
-                    checkedTrackColor = Color(0xFF9C7A35),
-                    uncheckedThumbColor = Color(0xFFD4BE95),
-                    uncheckedTrackColor = Color(0x66443322),
-                ),
+            Text(
+                text = "Module",
+                color = Color(0xFFDCC394),
+                style = MaterialTheme.typography.labelMedium,
             )
         }
+
+        Text(
+            text = label,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(horizontal = 10.dp, vertical = 14.dp),
+            color = Color(0xFFFFF3D6),
+            style = MaterialTheme.typography.titleMedium,
+        )
     }
+}
+
+@Composable
+private fun ModulePreviewOverlay(module: GameModule) {
+    val (title, description, gameplayImpact) = modulePreviewContent(module)
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xB815100A)),
+        contentAlignment = Alignment.Center,
+    ) {
+        Surface(
+            shape = RoundedCornerShape(20.dp),
+            color = Color(0xE0261A10),
+            modifier = Modifier
+                .fillMaxWidth(0.85f)
+                .padding(12.dp),
+        ) {
+            Column(
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 18.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+            ) {
+                Text(
+                    text = title,
+                    color = Color(0xFFFFEBC0),
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.SemiBold,
+                )
+                Text(
+                    text = description,
+                    color = Color(0xFFF4E2C2),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+                Text(
+                    text = "Game impact",
+                    color = Color(0xFFE7C678),
+                    style = MaterialTheme.typography.labelLarge,
+                    fontWeight = FontWeight.SemiBold,
+                )
+                Text(
+                    text = gameplayImpact,
+                    color = Color(0xFFFFF3D6),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
+        }
+    }
+}
+
+private fun modulePreviewContent(module: GameModule): Triple<String, String, String> = when (module) {
+    GameModule.EXCALIBUR -> Triple(
+        "Excalibur",
+        "Adds the Excalibur token to the game and assigns it to a player on the quest team.",
+        "Before quest cards are revealed, the Excalibur holder may force one quest-card switch between questing players, changing how that quest resolves.",
+    )
+
+    GameModule.LADY_OF_LAKE -> Triple(
+        "Lady of the Lake",
+        "Adds the Lady of the Lake token and loyalty-check action.",
+        "During Lady of the Lake moments, the holder inspects one player's alignment, then passes the token to that inspected player, creating new information and social pressure.",
+    )
+
+    GameModule.LANCELOT -> Triple(
+        "Lancelot",
+        "Adds the Good and Evil Lancelot roles.",
+        "This module is inferred from selected roles and can introduce allegiance uncertainty in Lancelot variants.",
+    )
 }

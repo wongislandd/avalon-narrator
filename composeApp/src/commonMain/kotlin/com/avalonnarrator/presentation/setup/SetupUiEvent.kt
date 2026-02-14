@@ -7,6 +7,8 @@ import com.avalonnarrator.domain.setup.GameModule
 sealed interface SetupUiEvent {
     data class ToggleRole(val roleId: RoleId) : SetupUiEvent
     data class ToggleModule(val module: GameModule) : SetupUiEvent
+    data class ShowModulePreview(val module: GameModule) : SetupUiEvent
+    data object HideModulePreview : SetupUiEvent
     data class ToggleBaseRole(val roleId: RoleId) : SetupUiEvent
     data class IncreaseBaseRole(val roleId: RoleId) : SetupUiEvent
     data class DecreaseBaseRole(val roleId: RoleId) : SetupUiEvent

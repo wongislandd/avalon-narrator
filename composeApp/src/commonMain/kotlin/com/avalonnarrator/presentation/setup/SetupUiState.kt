@@ -4,6 +4,7 @@ import com.avalonnarrator.domain.roles.Alignment
 import com.avalonnarrator.domain.roles.RoleCatalog
 import com.avalonnarrator.domain.roles.RoleDefinition
 import com.avalonnarrator.domain.setup.GameSetupConfig
+import com.avalonnarrator.domain.setup.GameModule
 import com.avalonnarrator.domain.setup.SetupIssue
 
 data class SetupUiState(
@@ -18,4 +19,5 @@ data class SetupUiState(
     val nonBlockingIssues: List<SetupIssue> = emptyList(),
     val canStartNarration: Boolean = true,
     val previewRole: RoleDefinition? = null,
+    val previewModule: GameModule? = null,
 )

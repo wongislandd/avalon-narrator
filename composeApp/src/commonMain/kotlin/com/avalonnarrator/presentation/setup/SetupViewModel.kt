@@ -91,11 +91,19 @@ class SetupViewModel(
             }
 
             is SetupUiEvent.ShowRolePreview -> {
-                _uiState.update { it.copy(previewRole = event.role) }
+                _uiState.update { it.copy(previewRole = event.role, previewModule = null) }
             }
 
             SetupUiEvent.HideRolePreview -> {
                 _uiState.update { it.copy(previewRole = null) }
+            }
+
+            is SetupUiEvent.ShowModulePreview -> {
+                _uiState.update { it.copy(previewModule = event.module, previewRole = null) }
+            }
+
+            SetupUiEvent.HideModulePreview -> {
+                _uiState.update { it.copy(previewModule = null) }
             }
 
             SetupUiEvent.OpenSettings -> {
