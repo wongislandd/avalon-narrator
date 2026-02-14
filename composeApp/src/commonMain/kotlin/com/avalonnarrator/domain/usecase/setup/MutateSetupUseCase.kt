@@ -4,7 +4,6 @@ import com.avalonnarrator.domain.roles.RoleId
 import com.avalonnarrator.domain.setup.GameModule
 import com.avalonnarrator.domain.setup.GameSetupConfig
 import com.avalonnarrator.domain.setup.RosterBuilder
-import kotlin.random.Random
 
 class MutateSetupUseCase(
     private val derivePlayerCount: DerivePlayerCountUseCase = DerivePlayerCountUseCase(),
@@ -71,7 +70,6 @@ class MutateSetupUseCase(
             }
 
             is SetupMutation.SetNarrationPace -> current.copy(narrationPace = mutation.pace)
-            is SetupMutation.RegenerateSeed -> current.copy(randomSeed = Random.nextLong())
             is SetupMutation.SetVoicePack -> current.copy(selectedVoicePack = mutation.voicePackId)
             is SetupMutation.ApplyRecommendedLineup -> {
                 current.copy(

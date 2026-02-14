@@ -41,7 +41,6 @@ class SettingsViewModel(
         when (event) {
             is SettingsUiEvent.ToggleValidators -> setupSession.mutate(SetupMutation.SetValidatorsEnabled(event.enabled))
             is SettingsUiEvent.SetPace -> setupSession.mutate(SetupMutation.SetNarrationPace(event.pace))
-            SettingsUiEvent.RegenerateSeed -> setupSession.mutate(SetupMutation.RegenerateSeed)
             is SettingsUiEvent.SetVoicePack -> setupSession.mutate(SetupMutation.SetVoicePack(event.voicePackId))
             SettingsUiEvent.OpenVoiceSelection -> {
                 viewModelScope.launch {

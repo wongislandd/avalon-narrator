@@ -489,20 +489,6 @@ private fun ModuleSelectionCard(
                     ),
                 ),
         )
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.TopCenter)
-                .padding(top = 16.dp),
-            contentAlignment = Alignment.Center,
-        ) {
-            Text(
-                text = "Module",
-                color = Color(0xFFDCC394),
-                style = MaterialTheme.typography.labelMedium,
-            )
-        }
-
         Text(
             text = label,
             modifier = Modifier

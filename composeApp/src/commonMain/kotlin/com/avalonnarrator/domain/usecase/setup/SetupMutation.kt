@@ -11,7 +11,6 @@ sealed interface SetupMutation {
     data class SetMinionCount(val count: Int) : SetupMutation
     data class ToggleModule(val module: GameModule) : SetupMutation
     data class SetNarrationPace(val pace: NarrationPace) : SetupMutation
-    data object RegenerateSeed : SetupMutation
     data class SetVoicePack(val voicePackId: VoicePackId) : SetupMutation
     data class ApplyRecommendedLineup(
         val specialRoles: Set<RoleId>,

@@ -23,7 +23,6 @@ class SettingsSetupStore(
             validatorsEnabled = settings.getBoolean(KEY_VALIDATORS_ENABLED, defaults.validatorsEnabled),
             enabledModules = parseModules(settings.getString(KEY_ENABLED_MODULES, "")),
             narrationPace = enumValueOrDefault(settings.getString(KEY_PACE, defaults.narrationPace.name), defaults.narrationPace),
-            randomSeed = settings.getLongOrNull(KEY_RANDOM_SEED),
             selectedVoicePack = parseVoicePack(
                 settings.getString(KEY_VOICE_PACK, defaults.selectedVoicePack),
                 defaults.selectedVoicePack,
@@ -44,7 +43,6 @@ class SettingsSetupStore(
         settings.putString(KEY_VOICE_PACK, config.selectedVoicePack)
         settings.putBoolean(KEY_NARRATION_REMINDERS, config.narrationRemindersEnabled)
         settings.putBoolean(KEY_DEBUG_TIMELINE, config.debugTimelineEnabled)
-        config.randomSeed?.let { settings.putLong(KEY_RANDOM_SEED, it) } ?: settings.remove(KEY_RANDOM_SEED)
     }
 
     private fun parseRoles(raw: String): Set<RoleId> = raw
@@ -72,7 +70,6 @@ class SettingsSetupStore(
         private const val KEY_VALIDATORS_ENABLED = "validators_enabled"
         private const val KEY_ENABLED_MODULES = "enabled_modules"
         private const val KEY_PACE = "narration_pace"
-        private const val KEY_RANDOM_SEED = "random_seed"
         private const val KEY_VOICE_PACK = "voice_pack"
         private const val KEY_NARRATION_REMINDERS = "narration_reminders"
         private const val KEY_DEBUG_TIMELINE = "debug_timeline"

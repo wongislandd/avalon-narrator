@@ -12,7 +12,6 @@ data class GameSetupConfig(
     val validatorsEnabled: Boolean = true,
     val enabledModules: Set<GameModule> = emptySet(),
     val narrationPace: NarrationPace = NarrationPace.NORMAL,
-    val randomSeed: Long? = null,
     val selectedVoicePack: VoicePackId = VoicePackIds.WIZARD,
     val narrationRemindersEnabled: Boolean = false,
     val debugTimelineEnabled: Boolean = false,

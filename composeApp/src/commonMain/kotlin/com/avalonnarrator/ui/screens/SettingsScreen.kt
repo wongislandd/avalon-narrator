@@ -67,40 +67,6 @@ fun SettingsScreen(
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFFFFEBC0),
             )
-            Spacer(Modifier.height(14.dp))
-
-            Surface(
-                shape = RoundedCornerShape(14.dp),
-                color = Color(0x5C291A0F),
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                Row(
-                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        text = "Player Count (Derived)",
-                        color = Color(0xFFFFE4A9),
-                        style = MaterialTheme.typography.titleSmall,
-                    )
-                    Text(
-                        text = config.playerCount.toString(),
-                        color = Color(0xFFFFF3D6),
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.SemiBold,
-                    )
-                }
-            }
-
-            Spacer(Modifier.height(14.dp))
-            ModuleRow(
-                label = "Enforce game rules",
-                description = "When toggled on, the app will strictly enforce game mechanics. Turn off if playing with custom rules.",
-                checked = config.validatorsEnabled,
-                onCheckedChange = { onEvent(SettingsUiEvent.ToggleValidators(it)) },
-            )
-
             Spacer(Modifier.height(16.dp))
             SectionTitle("Narration Pace")
             Spacer(Modifier.height(10.dp))
@@ -173,32 +139,9 @@ fun SettingsScreen(
             }
 
             Spacer(Modifier.height(16.dp))
-            Surface(
-                shape = RoundedCornerShape(14.dp),
-                color = Color(0x5C291A0F),
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                Column(Modifier.padding(12.dp)) {
-                    Text(
-                        "Random Seed: ${config.randomSeed ?: "Not set"}",
-                        color = Color(0xFFFFEBC0),
-                    )
-                    Spacer(Modifier.height(8.dp))
-                    Button(
-                        onClick = { onEvent(SettingsUiEvent.RegenerateSeed) },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFF9C7A35),
-                            contentColor = Color(0xFFFFF3D6),
-                        ),
-                    ) {
-                        Text("Regenerate Seed")
-                    }
-                }
-            }
-
-            Spacer(Modifier.height(16.dp))
             ModuleRow(
                 label = "Include Role Reminders",
+                description = "Enables readout of important information on characters during the narration phase.",
                 checked = config.narrationRemindersEnabled,
                 onCheckedChange = { onEvent(SettingsUiEvent.ToggleReminders(it)) },
             )
@@ -208,6 +151,14 @@ fun SettingsScreen(
                 label = "Show Debug Timeline",
                 checked = config.debugTimelineEnabled,
                 onCheckedChange = { onEvent(SettingsUiEvent.ToggleDebugTimeline(it)) },
+            )
+
+            Spacer(Modifier.height(16.dp))
+            ModuleRow(
+                label = "Enforce game rules",
+                description = "When toggled on, the app will strictly enforce game mechanics. Turn off if playing with custom rules.",
+                checked = config.validatorsEnabled,
+                onCheckedChange = { onEvent(SettingsUiEvent.ToggleValidators(it)) },
             )
 
             Spacer(Modifier.height(20.dp))
