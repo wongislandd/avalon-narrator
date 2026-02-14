@@ -1,0 +1,28 @@
+package com.avalonnarrator.domain.roles
+
+enum class RoleId {
+    MERLIN,
+    PERCIVAL,
+    CLERIC,
+    TROUBLEMAKER,
+    SENIOR_MESSENGER,
+    JUNIOR_MESSENGER,
+    UNTRUSTWORTHY_SERVANT,
+    ROGUE_GOOD,
+    SORCERER_GOOD,
+    LOYAL_SERVANT,
+    ASSASSIN,
+    MORGANA,
+    MORDRED,
+    OBERON,
+    LUNATIC,
+    BRUTE,
+    TRICKSTER,
+    REVEALER,
+    EVIL_MESSENGER,
+    ROGUE_EVIL,
+    SORCERER_EVIL,
+    MINION,
+    LANCELOT_GOOD,
+    LANCELOT_EVIL,
+}
