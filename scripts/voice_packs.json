@@ -1,0 +1,21 @@
+{
+  "default_pack_id": "wizard",
+  "packs": [
+    {
+      "id": "wizard",
+      "const_name": "WIZARD",
+      "display_name": "Wizard",
+      "description": "Deep theatrical narration with a dark-fantasy tone for full-table drama.",
+      "asset_dir": "wizard",
+      "voice_id": "JoYo65swyP8hH6fVMeTO"
+    },
+    {
+      "id": "rainbird_en",
+      "const_name": "RAINBIRD_EN",
+      "display_name": "Rainbird",
+      "description": "Calm British delivery with clear pacing and softer emphasis for readability.",
+      "asset_dir": "rainbird_en",
+      "voice_id": "bgU7lBMo69PNEOWHFqxM"
+    }
+  ]
+}

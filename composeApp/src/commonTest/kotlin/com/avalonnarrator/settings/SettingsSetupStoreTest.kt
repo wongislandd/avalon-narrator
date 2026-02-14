@@ -1,6 +1,6 @@
 package com.avalonnarrator.settings
 
-import com.avalonnarrator.domain.audio.VoicePackId
+import com.avalonnarrator.domain.audio.VoicePackIds
 import com.avalonnarrator.domain.roles.RoleId
 import com.avalonnarrator.domain.setup.GameModule
 import com.avalonnarrator.domain.setup.GameSetupConfig
@@ -26,7 +26,7 @@ class SettingsSetupStoreTest {
             enabledModules = setOf(GameModule.EXCALIBUR),
             narrationPace = NarrationPace.FAST,
             randomSeed = 123L,
-            selectedVoicePack = VoicePackId.WIZARD,
+            selectedVoicePack = VoicePackIds.WIZARD,
             narrationRemindersEnabled = true,
             debugTimelineEnabled = true,
         )

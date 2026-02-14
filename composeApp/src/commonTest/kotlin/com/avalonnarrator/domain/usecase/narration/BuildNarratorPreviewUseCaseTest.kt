@@ -1,7 +1,7 @@
 package com.avalonnarrator.domain.usecase.narration
 
 import com.avalonnarrator.domain.audio.ClipId
-import com.avalonnarrator.domain.audio.VoicePackId
+import com.avalonnarrator.domain.audio.VoicePackIds
 import com.avalonnarrator.domain.model.NarratorTimelineBlock
 import com.avalonnarrator.domain.narration.NarrationPlan
 import com.avalonnarrator.domain.narration.PlannedClip
@@ -26,7 +26,7 @@ class BuildNarratorPreviewUseCaseTest {
             minionAdjustment = 1,
         )
         val plan = NarrationPlan(
-            voicePackId = VoicePackId.WIZARD,
+            voicePackId = VoicePackIds.WIZARD,
             steps = listOf(
                 PlannedStep(
                     stepId = "intro",

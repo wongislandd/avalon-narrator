@@ -98,6 +98,32 @@ class SetupViewModel(
                 _uiState.update { it.copy(previewRole = null) }
             }
 
+            is SetupUiEvent.OpenRoleCategoryInfo -> {
+                _uiState.update { it.copy(selectedInfoCategory = event.category) }
+                viewModelScope.launch {
+                    _effects.emit(SetupUiEffect.Navigate(AppScreen.SETUP_ROLE_INFO))
+                }
+            }
+
+            SetupUiEvent.CloseRoleCategoryInfo -> {
+                _uiState.update { it.copy(selectedInfoCategory = null) }
+                viewModelScope.launch {
+                    _effects.emit(SetupUiEffect.Navigate(AppScreen.SETUP))
+                }
+            }
+
+            SetupUiEvent.OpenModuleInfo -> {
+                viewModelScope.launch {
+                    _effects.emit(SetupUiEffect.Navigate(AppScreen.SETUP_MODULE_INFO))
+                }
+            }
+
+            SetupUiEvent.CloseModuleInfo -> {
+                viewModelScope.launch {
+                    _effects.emit(SetupUiEffect.Navigate(AppScreen.SETUP))
+                }
+            }
+
             is SetupUiEvent.ShowModulePreview -> {
                 _uiState.update { it.copy(previewModule = event.module, previewRole = null) }
             }
@@ -109,6 +135,12 @@ class SetupViewModel(
             SetupUiEvent.OpenSettings -> {
                 viewModelScope.launch {
                     _effects.emit(SetupUiEffect.Navigate(AppScreen.SETTINGS))
+                }
+            }
+
+            SetupUiEvent.OpenLineupGuide -> {
+                viewModelScope.launch {
+                    _effects.emit(SetupUiEffect.Navigate(AppScreen.LINEUP_GUIDE))
                 }
             }
 

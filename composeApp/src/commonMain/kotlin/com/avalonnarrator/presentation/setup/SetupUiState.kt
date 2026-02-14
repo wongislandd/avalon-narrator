@@ -20,4 +20,5 @@ data class SetupUiState(
     val canStartNarration: Boolean = true,
     val previewRole: RoleDefinition? = null,
     val previewModule: GameModule? = null,
+    val selectedInfoCategory: SetupRoleCategory? = null,
 )

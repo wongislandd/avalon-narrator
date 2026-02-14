@@ -65,4 +65,46 @@ class MutateSetupUseCaseTest {
         assertEquals(0, withNegativeMinion.minionAdjustment)
         assertEquals(14, withNegativeMinion.playerCount)
     }
+
+    @Test
+    fun `apply recommended lineup replaces roster and re-derives modules`() {
+        val initial = GameSetupConfig(
+            selectedRoles = setOf(RoleId.MERLIN, RoleId.ASSASSIN, RoleId.PERCIVAL),
+            loyalServantAdjustment = 2,
+            minionAdjustment = 1,
+            enabledModules = setOf(GameModule.EXCALIBUR),
+        )
+
+        val applied = mutate(
+            initial,
+            SetupMutation.ApplyRecommendedLineup(
+                specialRoles = setOf(
+                    RoleId.MERLIN,
+                    RoleId.PERCIVAL,
+                    RoleId.LANCELOT_GOOD,
+                    RoleId.ASSASSIN,
+                    RoleId.MORGANA,
+                    RoleId.LANCELOT_EVIL,
+                ),
+                loyalServantCount = 2,
+                minionCount = 0,
+            ),
+        )
+
+        assertEquals(
+            setOf(
+                RoleId.MERLIN,
+                RoleId.PERCIVAL,
+                RoleId.LANCELOT_GOOD,
+                RoleId.ASSASSIN,
+                RoleId.MORGANA,
+                RoleId.LANCELOT_EVIL,
+            ),
+            applied.selectedRoles,
+        )
+        assertEquals(2, applied.loyalServantAdjustment)
+        assertEquals(0, applied.minionAdjustment)
+        assertEquals(8, applied.playerCount)
+        assertTrue(GameModule.LANCELOT in applied.enabledModules)
+    }
 }

@@ -48,7 +48,7 @@ fun HolographicRolePreviewCard(
         initialValue = 0f,
         targetValue = 1f,
         animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 3000, easing = LinearEasing),
+            animation = tween(durationMillis = 5200, easing = LinearEasing),
             repeatMode = RepeatMode.Restart,
         ),
         label = "cycle",
@@ -58,16 +58,16 @@ fun HolographicRolePreviewCard(
         initialValue = -1.2f,
         targetValue = 2.2f,
         animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 3200, easing = LinearEasing),
+            animation = tween(durationMillis = 5400, easing = LinearEasing),
             repeatMode = RepeatMode.Restart,
         ),
         label = "shimmer_progress",
     )
 
-    val rotationY = (sin(cycle * PI * 2.0) * 11.5).toFloat()
-    val rotationX = (cos(cycle * PI * 2.0) * 7.0).toFloat()
-    val scale = 1.02f + (sin(cycle * PI * 2.0) * 0.012f).toFloat()
-    val liftY = (cos(cycle * PI * 2.0) * -7.0).toFloat()
+    val rotationY = (sin(cycle * PI * 2.0) * 5.5).toFloat()
+    val rotationX = (cos(cycle * PI * 2.0) * 3.2).toFloat()
+    val scale = 1.006f + (sin(cycle * PI * 2.0) * 0.004f).toFloat()
+    val liftY = (cos(cycle * PI * 2.0) * -3.0).toFloat()
     Box(
         modifier = modifier
             .graphicsLayer {

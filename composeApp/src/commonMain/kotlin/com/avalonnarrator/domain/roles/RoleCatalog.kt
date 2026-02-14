@@ -9,7 +9,7 @@ object RoleCatalog {
             name = "Merlin",
             alignment = Alignment.GOOD,
             imageKey = "merlin",
-            mechanicSummary = "Knows most evil players. Must remain hidden from the Assassin.",
+            mechanicSummary = "Reveal: Sees Evil players except Mordred (and any module-hidden Evil roles). Endgame: If Assassin correctly names Merlin after 3 successful quests, Evil wins.",
             tags = setOf("information", "core"),
         ),
         RoleDefinition(
@@ -17,7 +17,7 @@ object RoleCatalog {
             name = "Percival",
             alignment = Alignment.GOOD,
             imageKey = "percival",
-            mechanicSummary = "Sees Merlin and Morgana but cannot tell which is which.",
+            mechanicSummary = "Reveal: Sees two Merlin candidates (Merlin and Morgana), but cannot distinguish which one is Merlin.",
             tags = setOf("information", "core"),
         ),
         RoleDefinition(
@@ -25,7 +25,7 @@ object RoleCatalog {
             name = "Cleric",
             alignment = Alignment.GOOD,
             imageKey = "cleric",
-            mechanicSummary = "Secretly checks loyalty information about the first leader.",
+            mechanicSummary = "Reveal: Learns whether the starting Leader is Good or Evil. Loyalty Check: This information can be altered by lying roles such as Trickster/Troublemaker.",
             tags = setOf("information", "expansion"),
         ),
         RoleDefinition(
@@ -33,7 +33,7 @@ object RoleCatalog {
             name = "Troublemaker",
             alignment = Alignment.GOOD,
             imageKey = "troublemaker",
-            mechanicSummary = "A loyal role with a forced misinformation constraint.",
+            mechanicSummary = "Loyalty Check: Must give false alignment information whenever their loyalty is checked.",
             tags = setOf("deception", "expansion"),
         ),
         RoleDefinition(
@@ -41,7 +41,7 @@ object RoleCatalog {
             name = "Senior Messenger",
             alignment = Alignment.GOOD,
             imageKey = "senior_messenger",
-            mechanicSummary = "Sees the Junior Messenger during reveal.",
+            mechanicSummary = "Reveal (Messengers): Learns Junior Messenger's identity.",
             tags = setOf("messenger", "expansion"),
         ),
         RoleDefinition(
@@ -49,7 +49,7 @@ object RoleCatalog {
             name = "Junior Messenger",
             alignment = Alignment.GOOD,
             imageKey = "junior_messenger",
-            mechanicSummary = "Signals to Senior Messenger during reveal.",
+            mechanicSummary = "Reveal (Messengers): Is seen by Senior Messenger, but does not learn Senior Messenger's identity.",
             tags = setOf("messenger", "expansion"),
         ),
         RoleDefinition(
@@ -57,7 +57,7 @@ object RoleCatalog {
             name = "Untrustworthy Servant",
             alignment = Alignment.GOOD,
             imageKey = "untrustworthy_servant",
-            mechanicSummary = "Appears suspicious in information systems despite being loyal.",
+            mechanicSummary = "Reveal: Knows Assassin. Quest: Cannot play Fail. Recruitment/Endgame: After 3 successful quests, Assassin may recruit them; if the recruitment guess is correct, they become Evil and perform assassination.",
             tags = setOf("deception", "expansion"),
         ),
         RoleDefinition(
@@ -65,7 +65,7 @@ object RoleCatalog {
             name = "Good Rogue",
             alignment = Alignment.GOOD,
             imageKey = "rogue_good",
-            mechanicSummary = "Good half of the Rogue module with a unique win condition.",
+            mechanicSummary = "Quest (Rogue): May play Rogue Success. Victory Check: Claims immediate individual victory by playing Rogue Success on the 3rd successful quest after at least one earlier successful quest.",
             tags = setOf("rogue", "expansion"),
         ),
         RoleDefinition(
@@ -73,7 +73,7 @@ object RoleCatalog {
             name = "Good Sorcerer",
             alignment = Alignment.GOOD,
             imageKey = "sorcerer_good",
-            mechanicSummary = "Good half of the Sorcerer module.",
+            mechanicSummary = "Quest (Sorcerers): May play Magic to invert quest resolution. Resolution: An odd number of Magic cards flips Success/Fail.",
             tags = setOf("sorcerer", "expansion"),
         ),
         RoleDefinition(
@@ -81,7 +81,7 @@ object RoleCatalog {
             name = "Loyal Servant",
             alignment = Alignment.GOOD,
             imageKey = "loyal_servant",
-            mechanicSummary = "No special power. Uses deduction during missions.",
+            mechanicSummary = "Standard role with no special abilities.",
             tags = setOf("core"),
         ),
         RoleDefinition(
@@ -89,7 +89,7 @@ object RoleCatalog {
             name = "Assassin",
             alignment = Alignment.EVIL,
             imageKey = "assassin",
-            mechanicSummary = "Attempts to identify Merlin after three successful missions.",
+            mechanicSummary = "Endgame: After 3 successful quests, names one player as Merlin. If correct, Evil wins immediately.",
             tags = setOf("core", "kill"),
         ),
         RoleDefinition(
@@ -97,7 +97,7 @@ object RoleCatalog {
             name = "Morgana",
             alignment = Alignment.EVIL,
             imageKey = "morgana",
-            mechanicSummary = "Appears as Merlin to Percival.",
+            mechanicSummary = "Reveal: Appears as Merlin to Percival.",
             tags = setOf("deception", "core"),
         ),
         RoleDefinition(
@@ -105,7 +105,7 @@ object RoleCatalog {
             name = "Mordred",
             alignment = Alignment.EVIL,
             imageKey = "mordred",
-            mechanicSummary = "Hidden from Merlin during the opening information phase.",
+            mechanicSummary = "Reveal: Hidden from Merlin.",
             tags = setOf("stealth", "core"),
         ),
         RoleDefinition(
@@ -113,7 +113,7 @@ object RoleCatalog {
             name = "Oberon",
             alignment = Alignment.EVIL,
             imageKey = "oberon",
-            mechanicSummary = "Unknown to other evil players and does not know them.",
+            mechanicSummary = "Reveal: Unknown to other Evil players and does not learn them.",
             tags = setOf("chaos", "core"),
         ),
         RoleDefinition(
@@ -121,7 +121,7 @@ object RoleCatalog {
             name = "Lunatic",
             alignment = Alignment.EVIL,
             imageKey = "lunatic",
-            mechanicSummary = "An evil role constrained to fail every quest they join.",
+            mechanicSummary = "Quest: Must play Fail on every quest they join.",
             tags = setOf("expansion"),
         ),
         RoleDefinition(
@@ -129,7 +129,7 @@ object RoleCatalog {
             name = "Brute",
             alignment = Alignment.EVIL,
             imageKey = "brute",
-            mechanicSummary = "Can only fail within specific quest windows per expansion rules.",
+            mechanicSummary = "Quest: May play Fail only on Quests 1-3; on Quests 4-5 must play Success.",
             tags = setOf("expansion"),
         ),
         RoleDefinition(
@@ -137,7 +137,7 @@ object RoleCatalog {
             name = "Trickster",
             alignment = Alignment.EVIL,
             imageKey = "trickster",
-            mechanicSummary = "Uses loyalty-check misinformation as part of expansion play.",
+            mechanicSummary = "Loyalty Check: May lie whenever their alignment is checked.",
             tags = setOf("deception", "expansion"),
         ),
         RoleDefinition(
@@ -145,7 +145,7 @@ object RoleCatalog {
             name = "Revealer",
             alignment = Alignment.EVIL,
             imageKey = "revealer",
-            mechanicSummary = "Loyalty status becomes public at a trigger point in expansion rules.",
+            mechanicSummary = "Quest Trigger: Must publicly reveal identity immediately after the second failed quest.",
             tags = setOf("expansion"),
         ),
         RoleDefinition(
@@ -153,7 +153,7 @@ object RoleCatalog {
             name = "Evil Messenger",
             alignment = Alignment.EVIL,
             imageKey = "evil_messenger",
-            mechanicSummary = "Evil member of the Messenger trio with hidden alignment pressure.",
+            mechanicSummary = "Quest (Messengers): Can submit Success, Fail, or Evil Message according to module rules.",
             tags = setOf("messenger", "expansion"),
         ),
         RoleDefinition(
@@ -161,7 +161,7 @@ object RoleCatalog {
             name = "Evil Rogue",
             alignment = Alignment.EVIL,
             imageKey = "rogue_evil",
-            mechanicSummary = "Evil half of the Rogue module and remains hidden from other evil during reveal.",
+            mechanicSummary = "Quest (Rogue): May play Rogue Fail. Victory Check: Claims immediate individual victory by playing Rogue Fail on the 3rd failed quest after at least one earlier failed quest.",
             tags = setOf("rogue", "expansion"),
         ),
         RoleDefinition(
@@ -169,7 +169,7 @@ object RoleCatalog {
             name = "Evil Sorcerer",
             alignment = Alignment.EVIL,
             imageKey = "sorcerer_evil",
-            mechanicSummary = "Evil half of the Sorcerer module and remains hidden from Merlin.",
+            mechanicSummary = "Quest (Sorcerers): May play Success or Magic, but cannot play Fail. Reveal (optional): Can be hidden from Merlin.",
             tags = setOf("sorcerer", "expansion"),
         ),
         RoleDefinition(
@@ -177,7 +177,7 @@ object RoleCatalog {
             name = "Minion",
             alignment = Alignment.EVIL,
             imageKey = "minion",
-            mechanicSummary = "No special power beyond being aligned with evil.",
+            mechanicSummary = "Standard role with no special abilities.",
             tags = setOf("core"),
         ),
         RoleDefinition(
@@ -185,7 +185,7 @@ object RoleCatalog {
             name = "Good Lancelot",
             alignment = Alignment.GOOD,
             imageKey = "lancelot_good",
-            mechanicSummary = "Can switch allegiance in module variants. Treat as good at start.",
+            mechanicSummary = "Reveal (Lancelot): Starts Good. Variant Trigger: May switch allegiance during Lancelot allegiance-change rules.",
             modules = setOf(GameModule.LANCELOT),
             tags = setOf("module", "lancelot"),
         ),
@@ -194,7 +194,7 @@ object RoleCatalog {
             name = "Evil Lancelot",
             alignment = Alignment.EVIL,
             imageKey = "lancelot_evil",
-            mechanicSummary = "Can switch allegiance in module variants. Treat as evil at start.",
+            mechanicSummary = "Reveal (Lancelot): Starts Evil. Variant Trigger: May switch allegiance during Lancelot allegiance-change rules.",
             modules = setOf(GameModule.LANCELOT),
             tags = setOf("module", "lancelot"),
         ),

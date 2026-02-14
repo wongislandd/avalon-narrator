@@ -9,6 +9,9 @@ import com.avalonnarrator.app.di.AppContainer
 import com.avalonnarrator.navigation.AppNavigatorState
 import com.avalonnarrator.navigation.AppScreen
 import com.avalonnarrator.navigation.PlatformBackHandler
+import com.avalonnarrator.presentation.lineups.LineupGuideUiEffect
+import com.avalonnarrator.presentation.lineups.LineupGuideUiEvent
+import com.avalonnarrator.presentation.lineups.LineupGuideViewModel
 import com.avalonnarrator.presentation.narrator.NarratorUiEffect
 import com.avalonnarrator.presentation.narrator.NarratorUiEvent
 import com.avalonnarrator.presentation.narrator.NarratorViewModel
@@ -16,9 +19,13 @@ import com.avalonnarrator.presentation.settings.SettingsUiEffect
 import com.avalonnarrator.presentation.settings.SettingsUiEvent
 import com.avalonnarrator.presentation.settings.SettingsViewModel
 import com.avalonnarrator.presentation.setup.SetupUiEffect
+import com.avalonnarrator.presentation.setup.SetupUiEvent
 import com.avalonnarrator.presentation.setup.SetupViewModel
+import com.avalonnarrator.ui.screens.LineupGuideScreen
 import com.avalonnarrator.ui.screens.NarratorScreen
 import com.avalonnarrator.ui.screens.SettingsScreen
+import com.avalonnarrator.ui.screens.SetupModuleInfoScreen
+import com.avalonnarrator.ui.screens.SetupRoleInfoScreen
 import com.avalonnarrator.ui.screens.SetupScreen
 import com.avalonnarrator.ui.screens.VoicePackSelectionScreen
 import com.avalonnarrator.ui.theme.AvalonTheme
@@ -47,10 +54,14 @@ fun AvalonNarratorApp() {
             buildNarratorPreviewUseCase = container.buildNarratorPreviewUseCase,
         )
     }
+    val lineupGuideViewModel = remember(container) {
+        LineupGuideViewModel(setupSession = container.setupSession)
+    }
 
     val setupUiState by setupViewModel.uiState.collectAsState()
     val settingsUiState by settingsViewModel.uiState.collectAsState()
     val narratorUiState by narratorViewModel.uiState.collectAsState()
+    val lineupGuideUiState by lineupGuideViewModel.uiState.collectAsState()
 
     LaunchedEffect(setupViewModel) {
         setupViewModel.effects.collectLatest { effect ->
@@ -76,12 +87,23 @@ fun AvalonNarratorApp() {
         }
     }
 
+    LaunchedEffect(lineupGuideViewModel) {
+        lineupGuideViewModel.effects.collectLatest { effect ->
+            when (effect) {
+                is LineupGuideUiEffect.Navigate -> navigator.navigate(effect.screen)
+            }
+        }
+    }
+
     AvalonTheme {
         PlatformBackHandler(
             enabled = navigator.currentScreen != AppScreen.SETUP,
             onBack = {
                 when (navigator.currentScreen) {
                     AppScreen.SETUP -> Unit
+                    AppScreen.LINEUP_GUIDE -> lineupGuideViewModel.onEvent(LineupGuideUiEvent.Back)
+                    AppScreen.SETUP_ROLE_INFO -> setupViewModel.onEvent(SetupUiEvent.CloseRoleCategoryInfo)
+                    AppScreen.SETUP_MODULE_INFO -> setupViewModel.onEvent(SetupUiEvent.CloseModuleInfo)
                     AppScreen.SETTINGS -> settingsViewModel.onEvent(SettingsUiEvent.Back)
                     AppScreen.VOICE_SELECTION -> settingsViewModel.onEvent(SettingsUiEvent.CloseVoiceSelection)
                     AppScreen.NARRATOR -> narratorViewModel.onEvent(NarratorUiEvent.Back)
@@ -91,6 +113,21 @@ fun AvalonNarratorApp() {
 
         when (navigator.currentScreen) {
             AppScreen.SETUP -> SetupScreen(
+                uiState = setupUiState,
+                onEvent = setupViewModel::onEvent,
+            )
+
+            AppScreen.LINEUP_GUIDE -> LineupGuideScreen(
+                uiState = lineupGuideUiState,
+                onEvent = lineupGuideViewModel::onEvent,
+            )
+
+            AppScreen.SETUP_ROLE_INFO -> SetupRoleInfoScreen(
+                uiState = setupUiState,
+                onEvent = setupViewModel::onEvent,
+            )
+
+            AppScreen.SETUP_MODULE_INFO -> SetupModuleInfoScreen(
                 uiState = setupUiState,
                 onEvent = setupViewModel::onEvent,
             )

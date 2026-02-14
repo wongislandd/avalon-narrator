@@ -1,7 +1,7 @@
 package com.avalonnarrator.engine.planner
 
 import com.avalonnarrator.domain.audio.ClipId
-import com.avalonnarrator.domain.audio.VoicePackId
+import com.avalonnarrator.domain.audio.VoicePackIds
 import com.avalonnarrator.domain.roles.RoleId
 import com.avalonnarrator.domain.setup.GameSetupConfig
 import com.avalonnarrator.domain.setup.GameModule
@@ -17,7 +17,7 @@ class DefaultNarrationPlannerTest {
         val planner = DefaultNarrationPlanner()
         val config = GameSetupConfig(
             selectedRoles = setOf(RoleId.MERLIN, RoleId.ASSASSIN, RoleId.PERCIVAL),
-            selectedVoicePack = VoicePackId.WIZARD,
+            selectedVoicePack = VoicePackIds.WIZARD,
         )
 
         val plan = planner.plan(config)
@@ -25,7 +25,7 @@ class DefaultNarrationPlannerTest {
         assertTrue(plan.steps.isNotEmpty())
         assertTrue(plan.steps.first().stepId.startsWith("intro"))
         assertTrue(plan.steps.last().stepId.startsWith("closing"))
-        assertEquals(VoicePackId.WIZARD, plan.voicePackId)
+        assertEquals(VoicePackIds.WIZARD, plan.voicePackId)
     }
 
     @Test
@@ -152,14 +152,14 @@ class DefaultNarrationPlannerTest {
             minionAdjustment = 1,
         )
 
-        val wizard = planner.plan(baseConfig.copy(selectedVoicePack = VoicePackId.WIZARD))
-        val rainbird = planner.plan(baseConfig.copy(selectedVoicePack = VoicePackId.RAINBIRD_EN))
+        val wizard = planner.plan(baseConfig.copy(selectedVoicePack = VoicePackIds.WIZARD))
+        val rainbird = planner.plan(baseConfig.copy(selectedVoicePack = VoicePackIds.RAINBIRD_EN))
 
         assertEquals(
             wizard.steps.flatMap { step -> step.clips.map { it.clipId } },
             rainbird.steps.flatMap { step -> step.clips.map { it.clipId } },
         )
-        assertEquals(VoicePackId.WIZARD, wizard.voicePackId)
-        assertEquals(VoicePackId.RAINBIRD_EN, rainbird.voicePackId)
+        assertEquals(VoicePackIds.WIZARD, wizard.voicePackId)
+        assertEquals(VoicePackIds.RAINBIRD_EN, rainbird.voicePackId)
     }
 }

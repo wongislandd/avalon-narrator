@@ -148,7 +148,7 @@ fun SettingsScreen(
             ) {
                 Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text(
-                        text = "Selected: ${selectedVoicePack?.displayName ?: config.selectedVoicePack.name}",
+                        text = "Selected: ${selectedVoicePack?.displayName ?: config.selectedVoicePack}",
                         color = Color(0xFFFFEBC0),
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.SemiBold,

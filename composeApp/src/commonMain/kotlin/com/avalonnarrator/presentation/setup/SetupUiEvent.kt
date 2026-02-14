@@ -14,6 +14,11 @@ sealed interface SetupUiEvent {
     data class DecreaseBaseRole(val roleId: RoleId) : SetupUiEvent
     data class ShowRolePreview(val role: RoleDefinition) : SetupUiEvent
     data object HideRolePreview : SetupUiEvent
+    data class OpenRoleCategoryInfo(val category: SetupRoleCategory) : SetupUiEvent
+    data object CloseRoleCategoryInfo : SetupUiEvent
+    data object OpenModuleInfo : SetupUiEvent
+    data object CloseModuleInfo : SetupUiEvent
     data object OpenSettings : SetupUiEvent
+    data object OpenLineupGuide : SetupUiEvent
     data object StartNarration : SetupUiEvent
 }

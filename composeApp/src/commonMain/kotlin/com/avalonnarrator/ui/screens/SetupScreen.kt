@@ -1,5 +1,6 @@
 package com.avalonnarrator.ui.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -20,6 +21,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.MenuBook
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -35,16 +38,24 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import avalon_narrator.composeapp.generated.resources.Res
+import avalon_narrator.composeapp.generated.resources.excalibur
+import avalon_narrator.composeapp.generated.resources.good_lancelot
+import avalon_narrator.composeapp.generated.resources.lady_of_the_lake
 import com.avalonnarrator.domain.roles.RoleId
 import com.avalonnarrator.domain.setup.GameModule
 import com.avalonnarrator.presentation.setup.SetupUiEvent
+import com.avalonnarrator.presentation.setup.SetupRoleCategory
 import com.avalonnarrator.presentation.setup.SetupUiState
 import com.avalonnarrator.ui.components.HolographicRolePreviewCard
 import com.avalonnarrator.ui.components.RoleCard
-import kotlinx.coroutines.withTimeoutOrNull
 import androidx.compose.foundation.gestures.detectTapGestures
+import kotlinx.coroutines.withTimeoutOrNull
+import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.painterResource
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -99,17 +110,32 @@ fun SetupScreen(
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.weight(1f),
                 )
-                Surface(
-                    shape = RoundedCornerShape(14.dp),
-                    color = Color(0x5C291A0F),
-                    modifier = Modifier.size(44.dp),
-                ) {
-                    IconButton(onClick = { onEvent(SetupUiEvent.OpenSettings) }) {
-                        Icon(
-                            imageVector = Icons.Filled.Settings,
-                            contentDescription = "Settings",
-                            tint = Color(0xFFFFEBC0),
-                        )
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Surface(
+                        shape = RoundedCornerShape(14.dp),
+                        color = Color(0x5C291A0F),
+                        modifier = Modifier.size(44.dp),
+                    ) {
+                        IconButton(onClick = { onEvent(SetupUiEvent.OpenLineupGuide) }) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.MenuBook,
+                                contentDescription = "Recommended lineups",
+                                tint = Color(0xFFFFEBC0),
+                            )
+                        }
+                    }
+                    Surface(
+                        shape = RoundedCornerShape(14.dp),
+                        color = Color(0x5C291A0F),
+                        modifier = Modifier.size(44.dp),
+                    ) {
+                        IconButton(onClick = { onEvent(SetupUiEvent.OpenSettings) }) {
+                            Icon(
+                                imageVector = Icons.Filled.Settings,
+                                contentDescription = "Settings",
+                                tint = Color(0xFFFFEBC0),
+                            )
+                        }
                     }
                 }
             }
@@ -190,12 +216,30 @@ fun SetupScreen(
                 Spacer(Modifier.height(14.dp))
             }
 
-            Text(
-                text = "Loyal Servants of Arthur ($selectedGoodCount)",
-                style = MaterialTheme.typography.titleMedium,
-                color = Color(0xFFE0F0FF),
-                modifier = Modifier.padding(horizontal = contentSidePadding),
-            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = contentSidePadding),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Text(
+                    text = "Loyal Servants of Arthur ($selectedGoodCount)",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = Color(0xFFE0F0FF),
+                    modifier = Modifier.weight(1f),
+                )
+                IconButton(
+                    onClick = { onEvent(SetupUiEvent.OpenRoleCategoryInfo(SetupRoleCategory.GOOD)) },
+                    modifier = Modifier.size(32.dp),
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Info,
+                        contentDescription = "Good role info",
+                        tint = Color(0xFFE0F0FF),
+                    )
+                }
+            }
             Spacer(Modifier.height(8.dp))
             FlowRow(
                 modifier = Modifier
@@ -239,12 +283,30 @@ fun SetupScreen(
             }
 
             Spacer(Modifier.height(18.dp))
-            Text(
-                text = "Minions of Mordred ($selectedEvilCount)",
-                style = MaterialTheme.typography.titleMedium,
-                color = Color(0xFFFFD4CD),
-                modifier = Modifier.padding(horizontal = contentSidePadding),
-            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = contentSidePadding),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Text(
+                    text = "Minions of Mordred ($selectedEvilCount)",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = Color(0xFFFFD4CD),
+                    modifier = Modifier.weight(1f),
+                )
+                IconButton(
+                    onClick = { onEvent(SetupUiEvent.OpenRoleCategoryInfo(SetupRoleCategory.EVIL)) },
+                    modifier = Modifier.size(32.dp),
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Info,
+                        contentDescription = "Evil role info",
+                        tint = Color(0xFFFFD4CD),
+                    )
+                }
+            }
             Spacer(Modifier.height(8.dp))
             FlowRow(
                 modifier = Modifier
@@ -288,12 +350,30 @@ fun SetupScreen(
             }
 
             Spacer(Modifier.height(18.dp))
-            Text(
-                text = "Modules ($selectedModuleCount)",
-                style = MaterialTheme.typography.titleMedium,
-                color = Color(0xFFFFE4A9),
-                modifier = Modifier.padding(horizontal = contentSidePadding),
-            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = contentSidePadding),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Text(
+                    text = "Modules ($selectedModuleCount)",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = Color(0xFFFFE4A9),
+                    modifier = Modifier.weight(1f),
+                )
+                IconButton(
+                    onClick = { onEvent(SetupUiEvent.OpenModuleInfo) },
+                    modifier = Modifier.size(32.dp),
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Info,
+                        contentDescription = "Module info",
+                        tint = Color(0xFFFFE4A9),
+                    )
+                }
+            }
             Spacer(Modifier.height(8.dp))
             FlowRow(
                 modifier = Modifier
@@ -394,6 +474,21 @@ private fun ModuleSelectionCard(
                 shape = RoundedCornerShape(18.dp),
             ),
     ) {
+        Image(
+            painter = painterResource(moduleArtwork(module)),
+            contentDescription = label,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop,
+        )
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(Color(0x33000000), Color(0x22000000), Color(0xC0130E08)),
+                    ),
+                ),
+        )
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -419,9 +514,15 @@ private fun ModuleSelectionCard(
     }
 }
 
+private fun moduleArtwork(module: GameModule): DrawableResource = when (module) {
+    GameModule.EXCALIBUR -> Res.drawable.excalibur
+    GameModule.LADY_OF_LAKE -> Res.drawable.lady_of_the_lake
+    GameModule.LANCELOT -> Res.drawable.good_lancelot
+}
+
 @Composable
 private fun ModulePreviewOverlay(module: GameModule) {
-    val (title, description, gameplayImpact) = modulePreviewContent(module)
+    val content = moduleGuideContent(module)
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -440,13 +541,13 @@ private fun ModulePreviewOverlay(module: GameModule) {
                 verticalArrangement = Arrangement.spacedBy(10.dp),
             ) {
                 Text(
-                    text = title,
+                    text = content.title,
                     color = Color(0xFFFFEBC0),
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.SemiBold,
                 )
                 Text(
-                    text = description,
+                    text = content.description,
                     color = Color(0xFFF4E2C2),
                     style = MaterialTheme.typography.bodyMedium,
                 )
@@ -457,31 +558,11 @@ private fun ModulePreviewOverlay(module: GameModule) {
                     fontWeight = FontWeight.SemiBold,
                 )
                 Text(
-                    text = gameplayImpact,
+                    text = content.gameplayImpact,
                     color = Color(0xFFFFF3D6),
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }
         }
     }
-}
-
-private fun modulePreviewContent(module: GameModule): Triple<String, String, String> = when (module) {
-    GameModule.EXCALIBUR -> Triple(
-        "Excalibur",
-        "Adds the Excalibur token to the game and assigns it to a player on the quest team.",
-        "Before quest cards are revealed, the Excalibur holder may force one quest-card switch between questing players, changing how that quest resolves.",
-    )
-
-    GameModule.LADY_OF_LAKE -> Triple(
-        "Lady of the Lake",
-        "Adds the Lady of the Lake token and loyalty-check action.",
-        "During Lady of the Lake moments, the holder inspects one player's alignment, then passes the token to that inspected player, creating new information and social pressure.",
-    )
-
-    GameModule.LANCELOT -> Triple(
-        "Lancelot",
-        "Adds the Good and Evil Lancelot roles.",
-        "This module is inferred from selected roles and can introduce allegiance uncertainty in Lancelot variants.",
-    )
 }

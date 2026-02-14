@@ -1,6 +1,7 @@
 package com.avalonnarrator.domain.setup
 
 import com.avalonnarrator.domain.audio.VoicePackId
+import com.avalonnarrator.domain.audio.VoicePackIds
 import com.avalonnarrator.domain.roles.RoleId
 
 data class GameSetupConfig(
@@ -12,7 +13,7 @@ data class GameSetupConfig(
     val enabledModules: Set<GameModule> = emptySet(),
     val narrationPace: NarrationPace = NarrationPace.NORMAL,
     val randomSeed: Long? = null,
-    val selectedVoicePack: VoicePackId = VoicePackId.WIZARD,
+    val selectedVoicePack: VoicePackId = VoicePackIds.WIZARD,
     val narrationRemindersEnabled: Boolean = false,
     val debugTimelineEnabled: Boolean = false,
 )

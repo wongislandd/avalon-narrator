@@ -36,15 +36,29 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import avalon_narrator.composeapp.generated.resources.Res
 import avalon_narrator.composeapp.generated.resources.assassin
-import avalon_narrator.composeapp.generated.resources.lancelot_evil
-import avalon_narrator.composeapp.generated.resources.lancelot_good
-import avalon_narrator.composeapp.generated.resources.loyal_servant
+import avalon_narrator.composeapp.generated.resources.brute
+import avalon_narrator.composeapp.generated.resources.cleric
+import avalon_narrator.composeapp.generated.resources.evil_lancelot
+import avalon_narrator.composeapp.generated.resources.evil_messenger
+import avalon_narrator.composeapp.generated.resources.evil_rogue
+import avalon_narrator.composeapp.generated.resources.evil_sorcerer
+import avalon_narrator.composeapp.generated.resources.good_lancelot
+import avalon_narrator.composeapp.generated.resources.good_rogue
+import avalon_narrator.composeapp.generated.resources.good_sorcerer
+import avalon_narrator.composeapp.generated.resources.junior_messenger
+import avalon_narrator.composeapp.generated.resources.loyal_servant_of_arthor
+import avalon_narrator.composeapp.generated.resources.lunatic
 import avalon_narrator.composeapp.generated.resources.merlin
 import avalon_narrator.composeapp.generated.resources.minion
 import avalon_narrator.composeapp.generated.resources.mordred
 import avalon_narrator.composeapp.generated.resources.morgana
 import avalon_narrator.composeapp.generated.resources.oberon
 import avalon_narrator.composeapp.generated.resources.percival
+import avalon_narrator.composeapp.generated.resources.revealer
+import avalon_narrator.composeapp.generated.resources.senior_messenger
+import avalon_narrator.composeapp.generated.resources.trickster
+import avalon_narrator.composeapp.generated.resources.troublemaker
+import avalon_narrator.composeapp.generated.resources.untrustworthy_servant
 import com.avalonnarrator.domain.roles.RoleDefinition
 import kotlinx.coroutines.withTimeoutOrNull
 import org.jetbrains.compose.resources.DrawableResource
@@ -261,14 +275,35 @@ fun CharacterArtwork(
 
 private fun drawableForImageKey(imageKey: String): DrawableResource = when (imageKey) {
     "assassin" -> Res.drawable.assassin
-    "lancelot_evil" -> Res.drawable.lancelot_evil
-    "lancelot_good" -> Res.drawable.lancelot_good
-    "loyal_servant" -> Res.drawable.loyal_servant
+    "brute" -> Res.drawable.brute
+    "cleric" -> Res.drawable.cleric
+    "evil_lancelot" -> Res.drawable.evil_lancelot
+    "evil_messenger" -> Res.drawable.evil_messenger
+    "evil_rogue" -> Res.drawable.evil_rogue
+    "evil_sorcerer" -> Res.drawable.evil_sorcerer
+    "good_lancelot" -> Res.drawable.good_lancelot
+    "good_rogue" -> Res.drawable.good_rogue
+    "good_sorcerer" -> Res.drawable.good_sorcerer
+    "junior_messenger" -> Res.drawable.junior_messenger
+    "lancelot_evil" -> Res.drawable.evil_lancelot
+    "lancelot_good" -> Res.drawable.good_lancelot
+    "loyal_servant" -> Res.drawable.loyal_servant_of_arthor
+    "loyal_servant_of_arthor" -> Res.drawable.loyal_servant_of_arthor
+    "lunatic" -> Res.drawable.lunatic
     "merlin" -> Res.drawable.merlin
     "minion" -> Res.drawable.minion
     "mordred" -> Res.drawable.mordred
     "morgana" -> Res.drawable.morgana
     "oberon" -> Res.drawable.oberon
     "percival" -> Res.drawable.percival
-    else -> Res.drawable.loyal_servant
+    "revealer" -> Res.drawable.revealer
+    "rogue_evil" -> Res.drawable.evil_rogue
+    "rogue_good" -> Res.drawable.good_rogue
+    "senior_messenger" -> Res.drawable.senior_messenger
+    "sorcerer_evil" -> Res.drawable.evil_sorcerer
+    "sorcerer_good" -> Res.drawable.good_sorcerer
+    "trickster" -> Res.drawable.trickster
+    "troublemaker" -> Res.drawable.troublemaker
+    "untrustworthy_servant" -> Res.drawable.untrustworthy_servant
+    else -> Res.drawable.loyal_servant_of_arthor
 }

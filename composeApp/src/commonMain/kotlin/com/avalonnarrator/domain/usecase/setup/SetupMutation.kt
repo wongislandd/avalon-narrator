@@ -13,6 +13,12 @@ sealed interface SetupMutation {
     data class SetNarrationPace(val pace: NarrationPace) : SetupMutation
     data object RegenerateSeed : SetupMutation
     data class SetVoicePack(val voicePackId: VoicePackId) : SetupMutation
+    data class ApplyRecommendedLineup(
+        val specialRoles: Set<RoleId>,
+        val loyalServantCount: Int,
+        val minionCount: Int,
+        val enabledModules: Set<GameModule> = emptySet(),
+    ) : SetupMutation
     data class SetDebugTimelineEnabled(val enabled: Boolean) : SetupMutation
     data class SetValidatorsEnabled(val enabled: Boolean) : SetupMutation
     data class SetNarrationRemindersEnabled(val enabled: Boolean) : SetupMutation

@@ -73,6 +73,14 @@ class MutateSetupUseCase(
             is SetupMutation.SetNarrationPace -> current.copy(narrationPace = mutation.pace)
             is SetupMutation.RegenerateSeed -> current.copy(randomSeed = Random.nextLong())
             is SetupMutation.SetVoicePack -> current.copy(selectedVoicePack = mutation.voicePackId)
+            is SetupMutation.ApplyRecommendedLineup -> {
+                current.copy(
+                    selectedRoles = mutation.specialRoles,
+                    loyalServantAdjustment = mutation.loyalServantCount,
+                    minionAdjustment = mutation.minionCount,
+                    enabledModules = mutation.enabledModules,
+                )
+            }
             is SetupMutation.SetDebugTimelineEnabled -> current.copy(debugTimelineEnabled = mutation.enabled)
             is SetupMutation.SetValidatorsEnabled -> current.copy(validatorsEnabled = mutation.enabled)
             is SetupMutation.SetNarrationRemindersEnabled -> current.copy(narrationRemindersEnabled = mutation.enabled)
