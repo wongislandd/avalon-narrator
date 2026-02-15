@@ -5,6 +5,6 @@ import com.avalonnarrator.domain.recommendation.RecommendedLineupDefinition
 
 data class LineupGuideUiState(
     val isInitialized: Boolean = false,
-    val selectedPlayerCount: Int = 5,
-    val lineups: List<RecommendedLineupDefinition> = RecommendedLineupCatalog.forPlayerCount(5),
+    val selectedPlayerCount: Int = 7,
+    val lineups: List<RecommendedLineupDefinition> = RecommendedLineupCatalog.forPlayerCount(7),
 )

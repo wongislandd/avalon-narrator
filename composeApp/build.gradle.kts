@@ -67,11 +67,11 @@ kotlin {
 }
 
 android {
-    namespace = "com.avalonnarrator"
+    namespace = "com.announcerforavalon"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.avalonnarrator"
+        applicationId = "com.announcerforavalon"
         minSdk = 26
         targetSdk = 35
         versionCode = 1

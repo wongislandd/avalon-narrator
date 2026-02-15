@@ -1,4 +1,4 @@
-# Avalon Narrator (KMP Scaffold)
+# Announcer for Avalon (KMP Scaffold)
 
 Kotlin Multiplatform app scaffold for an Avalon narrator with:
 - Shared Compose UI (Android + iOS)

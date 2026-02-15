@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -64,13 +63,10 @@ class LineupGuideViewModel(
 
     private fun observeSetup() {
         viewModelScope.launch {
-            combine(
-                setupSession.config,
-                setupSession.isInitialized,
-            ) { config, isInitialized -> config to isInitialized }.collectLatest { (config, isInitialized) ->
+            setupSession.isInitialized.collectLatest { isInitialized ->
                 if (!initializedFromSetup && isInitialized) {
                     initializedFromSetup = true
-                    updatePlayerCount(config.playerCount)
+                    _uiState.update { state -> state.copy(isInitialized = true) }
                 } else {
                     _uiState.update { it.copy(isInitialized = isInitialized) }
                 }

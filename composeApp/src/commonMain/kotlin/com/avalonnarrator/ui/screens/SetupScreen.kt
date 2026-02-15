@@ -104,7 +104,7 @@ fun SetupScreen(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text = "Avalon Narrator",
+                    text = "Announcer for Avalon",
                     style = MaterialTheme.typography.headlineMedium,
                     color = Color(0xFFFFEBC0),
                     fontWeight = FontWeight.Bold,
