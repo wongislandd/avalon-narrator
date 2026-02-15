@@ -43,4 +43,15 @@ Notes:
   - `./gradlew :composeApp:compileCommonMainKotlinMetadata`
 - Run iOS simulator tests:
   - `./gradlew :composeApp:iosSimulatorArm64Test`
+- Build iOS app host for Simulator (from the new `iosApp` Xcode project):
+  - `xcodebuild -project iosApp/iosApp.xcodeproj -scheme iosApp -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.1' -configuration Debug build`
 - Android compile requires local Android SDK configured (`ANDROID_HOME` or `local.properties`).
+
+## iOS App Host
+
+- Xcode project path: `iosApp/iosApp.xcodeproj`
+- The host app embeds the KMP framework by running:
+  - `./gradlew :composeApp:embedAndSignAppleFrameworkForXcode`
+  from an Xcode build phase.
+- Swift entry point uses shared Compose UI via:
+  - `MainViewControllerKt.MainViewController()`

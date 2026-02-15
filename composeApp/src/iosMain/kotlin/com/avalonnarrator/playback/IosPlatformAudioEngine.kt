@@ -94,20 +94,33 @@ private class IosPlatformAudioEngine : PlatformAudioEngine {
 
     private fun resolveBundlePath(assetPath: String): String? {
         val normalized = assetPath.trim().removePrefix("/")
-        val lastSlash = normalized.lastIndexOf('/')
-        val directory = if (lastSlash >= 0) normalized.substring(0, lastSlash) else null
-        val fileName = if (lastSlash >= 0) normalized.substring(lastSlash + 1) else normalized
+        val candidates = listOf(
+            normalized,
+            "compose-resources/$normalized",
+            "composeResources/$normalized",
+        )
+        candidates.forEach { candidate ->
+            val fromLookup = resolvePathInMainBundle(candidate)
+            if (fromLookup != null) return fromLookup
+        }
+        return null
+    }
+
+    private fun resolvePathInMainBundle(relativePath: String): String? {
+        val lastSlash = relativePath.lastIndexOf('/')
+        val directory = if (lastSlash >= 0) relativePath.substring(0, lastSlash) else null
+        val fileName = if (lastSlash >= 0) relativePath.substring(lastSlash + 1) else relativePath
         val dot = fileName.lastIndexOf('.')
         val resourceName = if (dot > 0) fileName.substring(0, dot) else fileName
         val extension = if (dot > 0) fileName.substring(dot + 1) else null
+
         val fromLookup = NSBundle.mainBundle.pathForResource(resourceName, extension, directory)
         if (fromLookup != null) return fromLookup
 
-        val directPath = NSBundle.mainBundle.resourcePath?.let { "$it/$normalized" }
+        val directPath = NSBundle.mainBundle.resourcePath?.let { "$it/$relativePath" }
         if (directPath != null && NSFileManager.defaultManager.fileExistsAtPath(directPath)) {
             return directPath
         }
-
         return null
     }
 

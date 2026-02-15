@@ -1,5 +1,11 @@
 package com.avalonnarrator.app
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -8,6 +14,7 @@ import androidx.compose.runtime.remember
 import com.avalonnarrator.app.di.AppContainer
 import com.avalonnarrator.navigation.AppNavigatorState
 import com.avalonnarrator.navigation.AppScreen
+import com.avalonnarrator.navigation.NavigationDirection
 import com.avalonnarrator.navigation.PlatformBackHandler
 import com.avalonnarrator.presentation.lineups.LineupGuideUiEffect
 import com.avalonnarrator.presentation.lineups.LineupGuideUiEvent
@@ -111,41 +118,61 @@ fun AvalonNarratorApp() {
             },
         )
 
-        when (navigator.currentScreen) {
-            AppScreen.SETUP -> SetupScreen(
-                uiState = setupUiState,
-                onEvent = setupViewModel::onEvent,
-            )
+        AnimatedContent(
+            targetState = navigator.navigationState,
+            transitionSpec = {
+                when (targetState.direction) {
+                    NavigationDirection.BACKWARD -> {
+                        (slideInHorizontally(initialOffsetX = { -it / 3 }) + fadeIn()) togetherWith
+                            (slideOutHorizontally(targetOffsetX = { it }) + fadeOut())
+                    }
 
-            AppScreen.LINEUP_GUIDE -> LineupGuideScreen(
-                uiState = lineupGuideUiState,
-                onEvent = lineupGuideViewModel::onEvent,
-            )
+                    NavigationDirection.FORWARD -> {
+                        (slideInHorizontally(initialOffsetX = { it }) + fadeIn()) togetherWith
+                            (slideOutHorizontally(targetOffsetX = { -it / 3 }) + fadeOut())
+                    }
 
-            AppScreen.SETUP_ROLE_INFO -> SetupRoleInfoScreen(
-                uiState = setupUiState,
-                onEvent = setupViewModel::onEvent,
-            )
+                    NavigationDirection.NONE -> fadeIn() togetherWith fadeOut()
+                }
+            },
+            label = "screen-transition",
+        ) { navState ->
+            when (navState.screen) {
+                AppScreen.SETUP -> SetupScreen(
+                    uiState = setupUiState,
+                    onEvent = setupViewModel::onEvent,
+                )
 
-            AppScreen.SETUP_MODULE_INFO -> SetupModuleInfoScreen(
-                uiState = setupUiState,
-                onEvent = setupViewModel::onEvent,
-            )
+                AppScreen.LINEUP_GUIDE -> LineupGuideScreen(
+                    uiState = lineupGuideUiState,
+                    onEvent = lineupGuideViewModel::onEvent,
+                )
 
-            AppScreen.SETTINGS -> SettingsScreen(
-                uiState = settingsUiState,
-                onEvent = settingsViewModel::onEvent,
-            )
+                AppScreen.SETUP_ROLE_INFO -> SetupRoleInfoScreen(
+                    uiState = setupUiState,
+                    onEvent = setupViewModel::onEvent,
+                )
 
-            AppScreen.VOICE_SELECTION -> VoicePackSelectionScreen(
-                uiState = settingsUiState,
-                onEvent = settingsViewModel::onEvent,
-            )
+                AppScreen.SETUP_MODULE_INFO -> SetupModuleInfoScreen(
+                    uiState = setupUiState,
+                    onEvent = setupViewModel::onEvent,
+                )
 
-            AppScreen.NARRATOR -> NarratorScreen(
-                uiState = narratorUiState,
-                onEvent = narratorViewModel::onEvent,
-            )
+                AppScreen.SETTINGS -> SettingsScreen(
+                    uiState = settingsUiState,
+                    onEvent = settingsViewModel::onEvent,
+                )
+
+                AppScreen.VOICE_SELECTION -> VoicePackSelectionScreen(
+                    uiState = settingsUiState,
+                    onEvent = settingsViewModel::onEvent,
+                )
+
+                AppScreen.NARRATOR -> NarratorScreen(
+                    uiState = narratorUiState,
+                    onEvent = narratorViewModel::onEvent,
+                )
+            }
         }
     }
 }
