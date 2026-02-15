@@ -15,7 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Icon
@@ -147,15 +147,15 @@ private fun RoleInfoRow(
             horizontalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             Box(
-                modifier = Modifier.size(52.dp),
+                modifier = Modifier.size(width = 52.dp, height = 62.dp),
                 contentAlignment = Alignment.Center,
             ) {
                 CharacterArtwork(
                     imageKey = role.imageKey,
                     contentDescription = role.name,
                     modifier = Modifier
-                        .size(44.dp)
-                        .clip(CircleShape),
+                        .size(width = 48.dp, height = 56.dp)
+                        .clip(RoundedCornerShape(10.dp)),
                 )
             }
             Text(

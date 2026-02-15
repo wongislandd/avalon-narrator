@@ -14,10 +14,15 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Remove
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -159,25 +164,27 @@ fun RoleCard(
 
         if (showQuantityControls && quantity != null && onDecreaseQuantity != null && onIncreaseQuantity != null) {
             Surface(
-                shape = RoundedCornerShape(14.dp),
+                shape = RoundedCornerShape(18.dp),
                 color = Color(0xCC20140C),
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(7.dp),
             ) {
                 Row(
-                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 4.dp),
+                    modifier = Modifier
+                        .height(40.dp)
+                        .padding(horizontal = 6.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    QuantityControlButton(symbol = "-", onClick = onDecreaseQuantity)
+                    QuantityControlButton(icon = Icons.Filled.Remove, contentDescription = "Decrease", onClick = onDecreaseQuantity)
                     Text(
                         text = quantity.toString(),
                         color = Color(0xFFFFF3D6),
                         fontWeight = FontWeight.SemiBold,
-                        fontSize = 12.sp,
-                        modifier = Modifier.padding(horizontal = 6.dp),
+                        fontSize = 18.sp,
+                        modifier = Modifier.padding(horizontal = 9.dp),
                     )
-                    QuantityControlButton(symbol = "+", onClick = onIncreaseQuantity)
+                    QuantityControlButton(icon = Icons.Filled.Add, contentDescription = "Increase", onClick = onIncreaseQuantity)
                 }
             }
         }
@@ -186,23 +193,24 @@ fun RoleCard(
 
 @Composable
 private fun QuantityControlButton(
-    symbol: String,
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    contentDescription: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(
         modifier = modifier
-            .size(20.dp)
-            .clip(RoundedCornerShape(10.dp))
-            .border(1.dp, Color(0x99D8C28D), RoundedCornerShape(10.dp))
+            .size(28.dp)
+            .clip(RoundedCornerShape(14.dp))
+            .border(1.dp, Color(0x99D8C28D), RoundedCornerShape(14.dp))
             .clickable(onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
-        Text(
-            text = symbol,
-            color = Color(0xFFFFEDCA),
-            fontWeight = FontWeight.Bold,
-            fontSize = 12.sp,
+        Icon(
+            imageVector = icon,
+            contentDescription = contentDescription,
+            tint = Color(0xFFFFEDCA),
+            modifier = Modifier.size(16.dp),
         )
     }
 }

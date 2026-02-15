@@ -3,6 +3,7 @@ package com.avalonnarrator.ui.screens
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -22,6 +24,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.MenuBook
+import androidx.compose.material.icons.filled.ExpandLess
+import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
@@ -32,6 +36,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -47,6 +55,7 @@ import avalon_narrator.composeapp.generated.resources.good_lancelot
 import avalon_narrator.composeapp.generated.resources.lady_of_the_lake
 import com.avalonnarrator.domain.roles.RoleId
 import com.avalonnarrator.domain.setup.GameModule
+import com.avalonnarrator.domain.setup.SetupIssue
 import com.avalonnarrator.presentation.setup.SetupUiEvent
 import com.avalonnarrator.presentation.setup.SetupRoleCategory
 import com.avalonnarrator.presentation.setup.SetupUiState
@@ -80,6 +89,7 @@ fun SetupScreen(
     }
     val selectedModuleCount = listOf(GameModule.EXCALIBUR, GameModule.LADY_OF_LAKE)
         .count { module -> module in uiState.config.enabledModules }
+    var issuesExpanded by rememberSaveable { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -183,38 +193,16 @@ fun SetupScreen(
                 Text(if (uiState.canStartNarration) "Start Narration" else "Fix Errors To Start")
             }
             Spacer(Modifier.height(14.dp))
-            if (uiState.blockingIssues.isNotEmpty()) {
-                Surface(
-                    shape = RoundedCornerShape(10.dp),
-                    color = Color(0xFF6F1F1A).copy(alpha = 0.92f),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = contentSidePadding),
-                ) {
-                    Column(Modifier.padding(10.dp)) {
-                        uiState.blockingIssues.forEach { issue ->
-                            Text(text = "• ${issue.message}", color = Color(0xFFFFD9D3))
-                        }
-                    }
-                }
-                Spacer(Modifier.height(10.dp))
-            }
-            if (uiState.nonBlockingIssues.isNotEmpty()) {
-                Surface(
-                    shape = RoundedCornerShape(10.dp),
-                    color = Color(0x665A3C1C),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = contentSidePadding),
-                ) {
-                    Column(Modifier.padding(10.dp)) {
-                        uiState.nonBlockingIssues.forEach { issue ->
-                            Text(text = "• ${issue.message}", color = Color(0xFFF3DFBF))
-                        }
-                    }
-                }
-                Spacer(Modifier.height(14.dp))
-            }
+            ValidationIssuesDropdown(
+                blockingIssues = uiState.blockingIssues,
+                nonBlockingIssues = uiState.nonBlockingIssues,
+                expanded = issuesExpanded,
+                onToggleExpanded = { issuesExpanded = !issuesExpanded },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = contentSidePadding),
+            )
+            Spacer(Modifier.height(14.dp))
 
             Row(
                 modifier = Modifier
@@ -427,6 +415,100 @@ fun SetupScreen(
 
             uiState.previewModule != null -> {
                 ModulePreviewOverlay(module = uiState.previewModule)
+            }
+        }
+    }
+}
+
+@Composable
+private fun ValidationIssuesDropdown(
+    blockingIssues: List<SetupIssue>,
+    nonBlockingIssues: List<SetupIssue>,
+    expanded: Boolean,
+    onToggleExpanded: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val errorCount = blockingIssues.size
+    val warningCount = nonBlockingIssues.size
+    val hasErrors = errorCount > 0
+    val hasWarnings = warningCount > 0
+    val accent = when {
+        hasErrors -> Color(0xFFFFB5AD)
+        hasWarnings -> Color(0xFFFFE2A6)
+        else -> Color(0xFFBFE8B7)
+    }
+    val panelColor = when {
+        hasErrors -> Color(0xCC6F1F1A)
+        hasWarnings -> Color(0xAA5A3C1C)
+        else -> Color(0x882D4A24)
+    }
+
+    Surface(
+        shape = RoundedCornerShape(10.dp),
+        color = panelColor,
+        modifier = modifier,
+    ) {
+        Column {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = 44.dp)
+                    .clickable(onClick = onToggleExpanded)
+                    .padding(horizontal = 12.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Text(
+                    text = "Errors & Warnings",
+                    color = accent,
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier.weight(1f),
+                )
+                Text(
+                    text = when {
+                        hasErrors || hasWarnings -> "$errorCount errors • $warningCount warnings"
+                        else -> "No issues"
+                    },
+                    color = accent,
+                    style = MaterialTheme.typography.labelLarge,
+                )
+                Icon(
+                    imageVector = if (expanded) Icons.Filled.ExpandLess else Icons.Filled.ExpandMore,
+                    contentDescription = if (expanded) "Collapse validation issues" else "Expand validation issues",
+                    tint = accent,
+                )
+            }
+
+            if (expanded) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 12.dp, end = 12.dp, bottom = 10.dp),
+                    verticalArrangement = Arrangement.spacedBy(6.dp),
+                ) {
+                    if (!hasErrors && !hasWarnings) {
+                        Text(
+                            text = "No current errors or warnings.",
+                            color = Color(0xFFE4F2DF),
+                            style = MaterialTheme.typography.bodySmall,
+                        )
+                    }
+                    blockingIssues.forEach { issue ->
+                        Text(
+                            text = "Error: ${issue.message}",
+                            color = Color(0xFFFFD9D3),
+                            style = MaterialTheme.typography.bodySmall,
+                        )
+                    }
+                    nonBlockingIssues.forEach { issue ->
+                        Text(
+                            text = "Warning: ${issue.message}",
+                            color = Color(0xFFF3DFBF),
+                            style = MaterialTheme.typography.bodySmall,
+                        )
+                    }
+                }
             }
         }
     }

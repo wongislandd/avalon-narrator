@@ -16,8 +16,12 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
@@ -61,12 +65,24 @@ fun SettingsScreen(
                 .padding(16.dp)
                 .verticalScroll(rememberScrollState()),
         ) {
-            Text(
-                "Settings",
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFFFFEBC0),
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                IconButton(onClick = { onEvent(SettingsUiEvent.Back) }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back",
+                        tint = Color(0xFFFFEBC0),
+                    )
+                }
+                Text(
+                    "Settings",
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFFFFEBC0),
+                )
+            }
             Spacer(Modifier.height(16.dp))
             SectionTitle("Narration Pace")
             Spacer(Modifier.height(10.dp))
@@ -161,17 +177,6 @@ fun SettingsScreen(
                 onCheckedChange = { onEvent(SettingsUiEvent.ToggleValidators(it)) },
             )
 
-            Spacer(Modifier.height(20.dp))
-            Button(
-                onClick = { onEvent(SettingsUiEvent.Back) },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF9C7A35),
-                    contentColor = Color(0xFFFFF3D6),
-                ),
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                Text("Back")
-            }
             Spacer(Modifier.height(12.dp))
         }
     }

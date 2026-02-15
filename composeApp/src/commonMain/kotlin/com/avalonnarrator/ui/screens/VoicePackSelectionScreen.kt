@@ -17,6 +17,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -57,12 +58,24 @@ fun VoicePackSelectionScreen(
                 .verticalScroll(rememberScrollState())
                 .padding(16.dp),
         ) {
-            Text(
-                text = "Voice Selection",
-                style = MaterialTheme.typography.headlineMedium,
-                color = Color(0xFFFFEBC0),
-                fontWeight = FontWeight.Bold,
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                IconButton(onClick = { onEvent(SettingsUiEvent.CloseVoiceSelection) }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back",
+                        tint = Color(0xFFFFEBC0),
+                    )
+                }
+                Text(
+                    text = "Voice Selection",
+                    style = MaterialTheme.typography.headlineMedium,
+                    color = Color(0xFFFFEBC0),
+                    fontWeight = FontWeight.Bold,
+                )
+            }
             Spacer(Modifier.height(6.dp))
             Text(
                 text = "Use the speaker icon to preview a random clip.",
@@ -141,16 +154,6 @@ fun VoicePackSelectionScreen(
                 Spacer(Modifier.height(12.dp))
             }
 
-            Button(
-                onClick = { onEvent(SettingsUiEvent.CloseVoiceSelection) },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF9C7A35),
-                    contentColor = Color(0xFFFFF3D6),
-                ),
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                Text("Back To Settings")
-            }
         }
     }
 }
