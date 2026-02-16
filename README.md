@@ -8,7 +8,7 @@ On top of that, being the announcer is awkward when you also have a role card. Y
 
 So I built a simple app to solve exactly that. You choose the roles you want to play with, and the app dynamically assembles the correct announcer sequence for your setup.
 
-I used AI to help build the app and generate the art and voice lines. Everything came together in about a day. It was a great fit for Kotlin Multiplatform, and because there is no networking requirement, the app works offline.
+I used AI to help build the app and generate the art and voice lines. Most of it came together in just a day, hooray for AI. It was a great fit for Kotlin Multiplatform, and because there is no networking requirement, the app works offline.
 
 ## What The App Does
 
