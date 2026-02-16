@@ -51,6 +51,8 @@ I used AI to help build the app and generate the art and voice lines. Most of it
 | Evil Roles Grid | <img width="220" alt="05_evil_roles_selection_grid" src="https://github.com/user-attachments/assets/5fd23907-b66e-43f3-a59f-a3f0a8102c6e" /> |
 | Voice Selection | <img width="220" alt="11_voice_selection_screen" src="https://github.com/user-attachments/assets/a8e3d02b-eab4-42a7-b033-27cfb4346612" /> |
 | Narrator Chamber | <img width="220" alt="12_narrators_chamber_playback_timeline" src="https://github.com/user-attachments/assets/1a70ad8d-659d-4458-8913-0d1199ac1020" /> |
+| Lineup Recommendations | <img width="220" alt="recommendations" src="https://github.com/user-attachments/assets/fca290ff-3655-403c-9df4-49cba9b023c4" />
+
 
 ### Web
 
