@@ -10,6 +10,8 @@ So I built a simple app to solve exactly that. You choose the roles you want to 
 
 I used AI to help build the app and generate the art and voice lines. Most of it came together in just a day, hooray for AI. It was a great fit for Kotlin Multiplatform given the general simplicity of the app, and because there is no networking requirement, the app works offline.
 
+Checkout the web version at https://wongislandd.github.io/avalon-narrator/
+
 ## What The App Does
 
 - Lets players configure their exact role and module setup
