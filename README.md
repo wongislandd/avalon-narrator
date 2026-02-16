@@ -36,21 +36,27 @@ I used AI to help build the app and generate the art and voice lines. Everything
 
 ### iOS
 
-![iOS Setup Home](/Users/wongislandd/Desktop/avalon_ios/01_setup_home_character_selection.png)
-![iOS Role Preview](/Users/wongislandd/Desktop/avalon_ios/02_merlin_role_preview_overlay.png)
-![iOS Good Roles Grid](/Users/wongislandd/Desktop/avalon_ios/03_good_roles_selection_grid.png)
-![iOS Narrator Chamber](/Users/wongislandd/Desktop/avalon_ios/12_narrators_chamber_playback_timeline.png)
+| Screen | Preview |
+| --- | --- |
+| Setup Home | <img width="220" alt="01_setup_home_character_selection" src="https://github.com/user-attachments/assets/8ac6b640-db72-46a4-a6c6-f2bbd72f64b6" /> |
+| Role Preview | <img width="220" alt="02_merlin_role_preview_overlay" src="https://github.com/user-attachments/assets/e9ad7b67-f165-4aeb-87cd-97b276e3cf94" /> |
+| Good Roles Grid | <img width="220" alt="03_good_roles_selection_grid" src="https://github.com/user-attachments/assets/8fabee1d-546f-473c-b036-ca589134f2f0" /> |
+| Narrator Chamber | <img width="220" alt="12_narrators_chamber_playback_timeline" src="https://github.com/user-attachments/assets/68d4e4bf-b8bd-486c-b7c9-362d475c4664" /> |
 
 ### Android
 
-![Android Setup Home](/Users/wongislandd/Desktop/avalon_android/01_setup_home_character_selection.png)
-![Android Evil Roles](/Users/wongislandd/Desktop/avalon_android/05_evil_roles_selection_grid.png)
-![Android Voice Selection](/Users/wongislandd/Desktop/avalon_android/11_voice_selection_screen.png)
-![Android Narrator Chamber](/Users/wongislandd/Desktop/avalon_android/12_narrators_chamber_playback_timeline.png)
+| Screen | Preview |
+| --- | --- |
+| Setup Home | <img width="220" alt="01_setup_home_character_selection" src="https://github.com/user-attachments/assets/4c49e3f1-e66e-497a-b9f0-1006763e9042" /> |
+| Evil Roles Grid | <img width="220" alt="05_evil_roles_selection_grid" src="https://github.com/user-attachments/assets/5fd23907-b66e-43f3-a59f-a3f0a8102c6e" /> |
+| Voice Selection | <img width="220" alt="11_voice_selection_screen" src="https://github.com/user-attachments/assets/a8e3d02b-eab4-42a7-b033-27cfb4346612" /> |
+| Narrator Chamber | <img width="220" alt="12_narrators_chamber_playback_timeline" src="https://github.com/user-attachments/assets/1a70ad8d-659d-4458-8913-0d1199ac1020" /> |
 
 ### Web
 
-![Web Setup Home](/Users/wongislandd/Desktop/avalon_web/01_setup_home_character_selection_web.png)
-![Web Role Preview](/Users/wongislandd/Desktop/avalon_web/02_percival_role_preview_overlay_web.png)
-![Web Roles And Modules](/Users/wongislandd/Desktop/avalon_web/03_evil_roles_and_modules_selection_web.png)
-![Web Narrator Chamber](/Users/wongislandd/Desktop/avalon_web/04_narrators_chamber_playback_timeline_web.png)
+| Screen | Preview |
+| --- | --- |
+| Setup Home | <img width="420" alt="01_setup_home_character_selection_web" src="https://github.com/user-attachments/assets/8013dbc6-32d5-49cc-b437-b29b3493f2dc" /> |
+| Role Preview | <img width="420" alt="02_percival_role_preview_overlay_web" src="https://github.com/user-attachments/assets/c55a22a2-008f-4da6-ae05-8854d1f92764" /> |
+| Roles And Modules | <img width="420" alt="03_evil_roles_and_modules_selection_web" src="https://github.com/user-attachments/assets/2314238d-18d6-4afe-bcb9-c86d59267db6" /> |
+| Narrator Chamber | <img width="420" alt="04_narrators_chamber_playback_timeline_web" src="https://github.com/user-attachments/assets/f0e76d5a-e4ad-4294-bcf1-bf2d559cd1e2" /> |
