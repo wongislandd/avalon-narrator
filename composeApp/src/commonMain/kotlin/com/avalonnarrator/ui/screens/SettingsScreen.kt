@@ -23,8 +23,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RadioButton
-import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
@@ -36,7 +34,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.avalonnarrator.domain.setup.NarrationPace
 import com.avalonnarrator.presentation.settings.SettingsUiEvent
 import com.avalonnarrator.presentation.settings.SettingsUiState
 
@@ -84,7 +81,7 @@ fun SettingsScreen(
                 )
             }
             Spacer(Modifier.height(16.dp))
-            SectionTitle("Narration Pace")
+            SectionTitle("Pauses")
             Spacer(Modifier.height(10.dp))
             Surface(
                 shape = RoundedCornerShape(14.dp),
@@ -93,28 +90,24 @@ fun SettingsScreen(
                     .fillMaxWidth()
                     .border(1.dp, Color(0x66D5AA62), RoundedCornerShape(14.dp)),
             ) {
-                Column(Modifier.padding(vertical = 6.dp)) {
-                    NarrationPace.entries.forEach { pace ->
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 8.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            RadioButton(
-                                selected = pace == config.narrationPace,
-                                onClick = { onEvent(SettingsUiEvent.SetPace(pace)) },
-                                colors = RadioButtonDefaults.colors(
-                                    selectedColor = Color(0xFFE6C374),
-                                    unselectedColor = Color(0xFFB79A67),
-                                ),
-                            )
-                            Text(
-                                pace.name.lowercase().replaceFirstChar(Char::titlecase),
-                                color = Color(0xFFFFEBC0),
-                            )
-                        }
-                    }
+                Column(
+                    modifier = Modifier.padding(12.dp),
+                    verticalArrangement = Arrangement.spacedBy(10.dp),
+                ) {
+                    PauseControlRow(
+                        label = "Regular Pause",
+                        description = "Used for normal waits and quick actions like thumbs up/down and close eyes (default 1s).",
+                        valueMs = config.regularPauseMs,
+                        onDecrease = { onEvent(SettingsUiEvent.DecreaseRegularPause) },
+                        onIncrease = { onEvent(SettingsUiEvent.IncreaseRegularPause) },
+                    )
+                    PauseControlRow(
+                        label = "Action Pause",
+                        description = "Used for inspection windows like open eyes/wake calls (default 4s).",
+                        valueMs = config.actionPauseMs,
+                        onDecrease = { onEvent(SettingsUiEvent.DecreaseActionPause) },
+                        onIncrease = { onEvent(SettingsUiEvent.IncreaseActionPause) },
+                    )
                 }
             }
 
@@ -240,3 +233,65 @@ private fun ModuleRow(
         }
     }
 }
+
+@Composable
+private fun PauseControlRow(
+    label: String,
+    description: String,
+    valueMs: Int,
+    onDecrease: () -> Unit,
+    onIncrease: () -> Unit,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+    ) {
+        Column(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(2.dp),
+        ) {
+            Text(text = label, color = Color(0xFFFFEBC0))
+            Text(
+                text = description,
+                color = Color(0xFFE6D3B2),
+                style = MaterialTheme.typography.bodySmall,
+            )
+            Text(
+                text = formatPauseSeconds(valueMs),
+                color = Color(0xFFE6D3B2),
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Bold
+            )
+        }
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Button(
+                onClick = onDecrease,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0x7A3C2A15),
+                    contentColor = Color(0xFFFFEBC0),
+                ),
+                contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 14.dp, vertical = 8.dp),
+            ) {
+                Text("-")
+            }
+            Button(
+                onClick = onIncrease,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF9C7A35),
+                    contentColor = Color(0xFFFFF3D6),
+                ),
+                contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 14.dp, vertical = 8.dp),
+            ) {
+                Text("+")
+            }
+        }
+    }
+}
+
+private fun formatPauseSeconds(valueMs: Int): String =
+    if (valueMs % 1000 == 0) {
+        "${valueMs / 1000}s"
+    } else {
+        "${valueMs / 1000.0}s"
+    }

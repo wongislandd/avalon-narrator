@@ -40,7 +40,18 @@ class SettingsViewModel(
     fun onEvent(event: SettingsUiEvent) {
         when (event) {
             is SettingsUiEvent.ToggleValidators -> setupSession.mutate(SetupMutation.SetValidatorsEnabled(event.enabled))
-            is SettingsUiEvent.SetPace -> setupSession.mutate(SetupMutation.SetNarrationPace(event.pace))
+            SettingsUiEvent.IncreaseRegularPause -> setupSession.mutate(
+                SetupMutation.SetRegularPauseMs(_uiState.value.config.regularPauseMs + PAUSE_STEP_MS),
+            )
+            SettingsUiEvent.DecreaseRegularPause -> setupSession.mutate(
+                SetupMutation.SetRegularPauseMs(_uiState.value.config.regularPauseMs - PAUSE_STEP_MS),
+            )
+            SettingsUiEvent.IncreaseActionPause -> setupSession.mutate(
+                SetupMutation.SetActionPauseMs(_uiState.value.config.actionPauseMs + PAUSE_STEP_MS),
+            )
+            SettingsUiEvent.DecreaseActionPause -> setupSession.mutate(
+                SetupMutation.SetActionPauseMs(_uiState.value.config.actionPauseMs - PAUSE_STEP_MS),
+            )
             is SettingsUiEvent.SetVoicePack -> setupSession.mutate(SetupMutation.SetVoicePack(event.voicePackId))
             SettingsUiEvent.OpenVoiceSelection -> {
                 viewModelScope.launch {
@@ -148,5 +159,9 @@ class SettingsViewModel(
     override fun onCleared() {
         stopPreview()
         super.onCleared()
+    }
+
+    companion object {
+        private const val PAUSE_STEP_MS = 500
     }
 }

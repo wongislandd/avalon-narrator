@@ -4,7 +4,6 @@ import com.avalonnarrator.domain.audio.VoicePackIds
 import com.avalonnarrator.domain.roles.RoleId
 import com.avalonnarrator.domain.setup.GameModule
 import com.avalonnarrator.domain.setup.GameSetupConfig
-import com.avalonnarrator.domain.setup.NarrationPace
 import com.russhwolf.settings.MapSettings
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
@@ -24,7 +23,8 @@ class SettingsSetupStoreTest {
             minionAdjustment = -1,
             validatorsEnabled = false,
             enabledModules = setOf(GameModule.EXCALIBUR),
-            narrationPace = NarrationPace.FAST,
+            regularPauseMs = 1_500,
+            actionPauseMs = 5_000,
             selectedVoicePack = VoicePackIds.WIZARD,
             narrationRemindersEnabled = true,
             debugTimelineEnabled = true,

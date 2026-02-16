@@ -1,5 +1,6 @@
 package com.avalonnarrator.domain.model
 
+import com.avalonnarrator.domain.narration.NarrationPauseType
 import com.avalonnarrator.domain.roles.RoleId
 
 data class NarratorPreview(
@@ -24,9 +25,10 @@ sealed interface NarratorTimelineBlock {
         val revealSummary: NarratorRevealSummary,
     ) : NarratorTimelineBlock
 
-    data class Delay(
+    data class Pause(
         override val stepIndex: Int,
-        val delayMs: Long,
+        val pauseMs: Long,
+        val pauseType: NarrationPauseType,
     ) : NarratorTimelineBlock
 }
 

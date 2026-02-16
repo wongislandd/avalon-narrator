@@ -19,7 +19,6 @@ actual fun createPlatformAudioEngine(): PlatformAudioEngine = IosPlatformAudioEn
 private class IosPlatformAudioEngine : PlatformAudioEngine {
     private var activePlayer: AVAudioPlayer? = null
     private var activeDelegate: AVAudioPlayerDelegateProtocol? = null
-    private var backtrackPlayer: AVAudioPlayer? = null
 
     override suspend fun play(assetPath: String) {
         val resourcePath = resolveBundlePath(assetPath) ?: run {
@@ -63,33 +62,12 @@ private class IosPlatformAudioEngine : PlatformAudioEngine {
 
     override fun pause() {
         activePlayer?.pause()
-        backtrackPlayer?.pause()
     }
 
     override fun stop() {
         activePlayer?.stop()
         activePlayer = null
         activeDelegate = null
-        stopBacktrack()
-    }
-
-    override fun startBacktrack(assetPath: String, volume: Float) {
-        val resourcePath = resolveBundlePath(assetPath) ?: return
-        ensurePlaybackSession()
-        val url = NSURL.fileURLWithPath(resourcePath)
-        val player = AVAudioPlayer(contentsOfURL = url, error = null)
-        player.numberOfLoops = -1
-        player.volume = volume.coerceIn(0f, 1f)
-        player.prepareToPlay()
-        if (player.play()) {
-            backtrackPlayer?.stop()
-            backtrackPlayer = player
-        }
-    }
-
-    override fun stopBacktrack() {
-        backtrackPlayer?.stop()
-        backtrackPlayer = null
     }
 
     private fun resolveBundlePath(assetPath: String): String? {

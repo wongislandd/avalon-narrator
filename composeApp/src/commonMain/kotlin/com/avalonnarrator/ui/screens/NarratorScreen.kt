@@ -16,8 +16,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Pause
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Replay
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -27,6 +31,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -34,6 +39,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.avalonnarrator.domain.model.NarratorTimelineBlock
+import com.avalonnarrator.domain.narration.NarrationPauseType
 import com.avalonnarrator.presentation.narrator.NarratorUiEvent
 import com.avalonnarrator.presentation.narrator.NarratorUiState
 
@@ -44,6 +50,24 @@ fun NarratorScreen(
 ) {
     val playbackState = uiState.playbackState
     val preview = uiState.preview
+    val timelineListState = rememberLazyListState()
+    val activeBlockIndex = preview.timelineBlocks.indexOfFirst { block ->
+        when (block) {
+            is NarratorTimelineBlock.Info -> {
+                block.stepIndex == playbackState.currentStepIndex && !playbackState.isInDelay
+            }
+
+            is NarratorTimelineBlock.Pause -> {
+                block.stepIndex == playbackState.currentStepIndex && playbackState.isInDelay
+            }
+        }
+    }
+
+    LaunchedEffect(activeBlockIndex, preview.timelineBlocks.size) {
+        if (activeBlockIndex >= 0) {
+            timelineListState.animateScrollToItem(activeBlockIndex)
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -88,97 +112,40 @@ fun NarratorScreen(
             }
             Spacer(Modifier.height(12.dp))
 
+            NarratorSessionSummaryCard(
+                voicePack = uiState.config.selectedVoicePack,
+                estimatedLength = preview.estimatedLengthLabel,
+                selectedTotal = preview.selectedTotal,
+                stepProgress = preview.stepProgressLabel,
+                selectedGoodSummary = preview.selectedGoodSummary,
+                selectedEvilSummary = preview.selectedEvilSummary,
+                modulesSummary = preview.modulesSummary,
+            )
+
+            Spacer(Modifier.height(14.dp))
+            Text(
+                "Playback Timeline",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFFFFEBC0),
+            )
+            Spacer(Modifier.height(8.dp))
+
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f),
+                state = timelineListState,
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 contentPadding = PaddingValues(bottom = 8.dp),
             ) {
-                item {
-                    Surface(
-                        color = Color(0x6620140B),
-                        shape = MaterialTheme.shapes.large,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .border(1.dp, Color(0x66D5AA62), MaterialTheme.shapes.large),
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(12.dp),
-                            verticalArrangement = Arrangement.spacedBy(4.dp),
-                        ) {
-                            Text(
-                                "Voice Pack: ${uiState.config.selectedVoicePack}",
-                                color = Color(0xFFFFEBC0),
-                                style = MaterialTheme.typography.titleSmall,
-                                fontWeight = FontWeight.SemiBold,
-                            )
-                            Text("Estimated Length: ${preview.estimatedLengthLabel}", color = Color(0xFFF4DFC1))
-                            Text("Selected Characters: ${preview.selectedTotal}", color = Color(0xFFF4DFC1))
-                        }
-                    }
-                }
-
-                item {
-                    val playbackBorder = if (playbackState.isPlaying) Color(0xFFE0C06F) else Color(0x66D5AA62)
-                    val playbackBackground = if (playbackState.isPlaying) Color(0x7F2B2215) else Color(0x6620140B)
-                    Surface(
-                        color = playbackBackground,
-                        shape = MaterialTheme.shapes.large,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .border(1.dp, playbackBorder, MaterialTheme.shapes.large),
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(12.dp),
-                            verticalArrangement = Arrangement.spacedBy(4.dp),
-                        ) {
-                            Text(
-                                "Now Playing",
-                                color = Color(0xFFFFEBC0),
-                                style = MaterialTheme.typography.titleSmall,
-                                fontWeight = FontWeight.Bold,
-                            )
-                            Text(preview.nowPlayingText, color = Color(0xFFF8E8CC))
-                            Text("Step ${preview.stepProgressLabel}", color = Color(0xFFD9C39D))
-                        }
-                    }
-                }
-
-                item {
-                    Surface(
-                        color = Color(0x4CFFE6B8),
-                        shape = MaterialTheme.shapes.large,
-                        modifier = Modifier.fillMaxWidth(),
-                    ) {
-                        Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                            Text(
-                                "Selection Preview",
-                                fontWeight = FontWeight.Bold,
-                                color = Color(0xFF2A1B10),
-                            )
-                            Text("Good: ${preview.selectedGoodSummary}", color = Color(0xFF2A1B10))
-                            Text("Evil: ${preview.selectedEvilSummary}", color = Color(0xFF2A1B10))
-                            Text("Modules: ${preview.modulesSummary}", color = Color(0xFF2A1B10))
-                        }
-                    }
-                }
-
-                item {
-                    Text(
-                        "Playback Timeline",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFFFFEBC0),
-                    )
-                }
-
                 itemsIndexed(preview.timelineBlocks) { _, block ->
                     when (block) {
                         is NarratorTimelineBlock.Info -> {
                             val active = block.stepIndex == playbackState.currentStepIndex && !playbackState.isInDelay
                             val background = if (active) Color(0x80325366) else Color(0x6620140B)
                             val border = if (active) Color(0xFFE6C374) else Color(0x668D6A35)
+                            val spokenLine = block.lines.firstOrNull().orEmpty()
                             Surface(
                                 color = background,
                                 shape = MaterialTheme.shapes.medium,
@@ -191,29 +158,15 @@ fun NarratorScreen(
                                     verticalArrangement = Arrangement.spacedBy(2.dp),
                                 ) {
                                     Text(
-                                        "${block.phaseLabel}: ${block.stepLabel}",
-                                        fontWeight = FontWeight.Bold,
-                                        color = Color(0xFFFFEBC0),
+                                        text = spokenLine.ifBlank { block.stepLabel },
+                                        color = if (active) Color(0xFFFFF2D8) else Color(0xFFF3DFBF),
+                                        fontWeight = if (active) FontWeight.SemiBold else FontWeight.Normal,
                                     )
-                                    Text("Audience: ${block.revealSummary.audienceLabel}", color = Color(0xFFF4DFC1))
-                                    if (block.revealSummary.revealedRoles.isNotEmpty()) {
-                                        val revealed = block.revealSummary.revealedRoles.entries.joinToString(", ") { (role, count) ->
-                                            "${role.name.lowercase().replace('_', ' ').replaceFirstChar(Char::titlecase)}${if (count > 1) " x$count" else ""}"
-                                        }
-                                        Text("Revealed: $revealed", color = Color(0xFFF4DFC1))
-                                    }
-                                    if (block.revealSummary.note.isNotBlank()) {
-                                        Text("Note: ${block.revealSummary.note}", color = Color(0xFFE0CBAB))
-                                    }
-                                    Text("Lines:", fontWeight = FontWeight.SemiBold, color = Color(0xFFFFEBC0))
-                                    block.lines.forEach { line ->
-                                        Text("• $line", color = Color(0xFFF3DFBF))
-                                    }
                                 }
                             }
                         }
 
-                        is NarratorTimelineBlock.Delay -> {
+                        is NarratorTimelineBlock.Pause -> {
                             val active = block.stepIndex == playbackState.currentStepIndex && playbackState.isInDelay
                             val background = if (active) Color(0x99A66E2D) else Color(0x663B2A16)
                             val border = if (active) Color(0xFFFFDF9A) else Color(0x668D6A35)
@@ -228,20 +181,15 @@ fun NarratorScreen(
                                     modifier = Modifier.padding(10.dp),
                                     verticalArrangement = Arrangement.spacedBy(2.dp),
                                 ) {
-                                    Text("Delay Block", fontWeight = FontWeight.Bold, color = Color(0xFFFFF2D8))
-                                    Text("${block.delayMs} ms pause before next info.", color = Color(0xFFFFE8C4))
+                                    Text(
+                                        "${pauseTypeLabel(block.pauseType)}",
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color(0xFFFFF2D8),
+                                    )
+                                    Text("${block.pauseMs} ms", color = Color(0xFFFFE8C4))
                                 }
                             }
                         }
-                    }
-                }
-
-                if (uiState.config.debugTimelineEnabled && playbackState.debugMessages.isNotEmpty()) {
-                    item {
-                        Text("Debug", style = MaterialTheme.typography.titleMedium, color = Color(0xFFFFEBC0))
-                    }
-                    itemsIndexed(playbackState.debugMessages) { _, message ->
-                        Text("• $message", color = Color(0xFFE8D1AF))
                     }
                 }
             }
@@ -261,21 +209,70 @@ fun NarratorScreen(
                     ),
                     modifier = Modifier.weight(1f),
                 ) {
-                    Text(if (playbackState.isPlaying) "Pause" else "Play", fontWeight = FontWeight.SemiBold)
-                }
-                OutlinedButton(
-                    onClick = { onEvent(NarratorUiEvent.NextStep) },
-                    modifier = Modifier.weight(1f),
-                ) {
-                    Text("Next", color = Color(0xFFFFEBC0), fontWeight = FontWeight.SemiBold)
+                    Icon(
+                        imageVector = if (playbackState.isPlaying) Icons.Filled.Pause else Icons.Filled.PlayArrow,
+                        contentDescription = if (playbackState.isPlaying) "Pause" else "Play",
+                    )
                 }
                 OutlinedButton(
                     onClick = { onEvent(NarratorUiEvent.Restart) },
                     modifier = Modifier.weight(1f),
                 ) {
-                    Text("Restart", color = Color(0xFFFFEBC0), fontWeight = FontWeight.SemiBold)
+                    Icon(
+                        imageVector = Icons.Filled.Replay,
+                        contentDescription = "Restart",
+                        tint = Color(0xFFFFEBC0),
+                    )
                 }
             }
         }
     }
+}
+
+@Composable
+private fun NarratorSessionSummaryCard(
+    voicePack: String,
+    estimatedLength: String,
+    selectedTotal: Int,
+    stepProgress: String,
+    selectedGoodSummary: String,
+    selectedEvilSummary: String,
+    modulesSummary: String,
+) {
+    Surface(
+        color = Color(0x6620140B),
+        shape = MaterialTheme.shapes.large,
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(1.dp, Color(0x66D5AA62), MaterialTheme.shapes.large),
+    ) {
+        Column(
+            modifier = Modifier.padding(12.dp),
+            verticalArrangement = Arrangement.spacedBy(6.dp),
+        ) {
+            Text(
+                "Voice Pack: $voicePack",
+                color = Color(0xFFFFEBC0),
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.SemiBold,
+            )
+            Text("Estimated Length: $estimatedLength", color = Color(0xFFF4DFC1))
+            Text("Selected Characters: $selectedTotal", color = Color(0xFFF4DFC1))
+            Text("Step $stepProgress", color = Color(0xFFD9C39D))
+            Spacer(Modifier.height(2.dp))
+            Text(
+                "Selection Preview",
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFFFFEBC0),
+            )
+            Text("Good: $selectedGoodSummary", color = Color(0xFFF4DFC1))
+            Text("Evil: $selectedEvilSummary", color = Color(0xFFF4DFC1))
+            Text("Modules: $modulesSummary", color = Color(0xFFF4DFC1))
+        }
+    }
+}
+
+private fun pauseTypeLabel(type: NarrationPauseType): String = when (type) {
+    NarrationPauseType.ACTION -> "Action Pause"
+    NarrationPauseType.STANDARD -> "Standard Pause"
 }

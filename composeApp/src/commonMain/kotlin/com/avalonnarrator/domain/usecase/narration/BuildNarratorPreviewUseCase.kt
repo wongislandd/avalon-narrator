@@ -5,6 +5,7 @@ import com.avalonnarrator.domain.model.NarratorPreview
 import com.avalonnarrator.domain.model.NarratorRevealSummary
 import com.avalonnarrator.domain.model.NarratorTimelineBlock
 import com.avalonnarrator.domain.narration.NarrationPlan
+import com.avalonnarrator.domain.narration.NarrationPauseType
 import com.avalonnarrator.domain.narration.PlannedStep
 import com.avalonnarrator.domain.roles.Alignment
 import com.avalonnarrator.domain.roles.RoleCatalog
@@ -73,7 +74,13 @@ class BuildNarratorPreviewUseCase {
                 ),
             )
             if (step.delayAfterMs > 0L) {
-                add(NarratorTimelineBlock.Delay(stepIndex = stepIndex, delayMs = step.delayAfterMs))
+                add(
+                    NarratorTimelineBlock.Pause(
+                        stepIndex = stepIndex,
+                        pauseMs = step.delayAfterMs,
+                        pauseType = step.pauseType,
+                    ),
+                )
             }
         }
     }
@@ -84,7 +91,7 @@ class BuildNarratorPreviewUseCase {
     ): String {
         val currentStep = steps.getOrNull(playbackState.currentStepIndex) ?: return "Not started"
         if (playbackState.isInDelay) {
-            return "Delay after ${stepLabel(canonicalStepId(currentStep.stepId))}"
+            return "${pauseTypeLabel(currentStep.pauseType)} after ${stepLabel(canonicalStepId(currentStep.stepId))}"
         }
 
         val currentClip = currentStep.clips.getOrNull(playbackState.currentClipIndex)
@@ -240,4 +247,9 @@ class BuildNarratorPreviewUseCase {
     private fun moduleLabel(module: GameModule): String = module.name
         .split('_')
         .joinToString(" ") { token -> token.lowercase().replaceFirstChar(Char::titlecase) }
+
+    private fun pauseTypeLabel(type: NarrationPauseType): String = when (type) {
+        NarrationPauseType.ACTION -> "Action Pause"
+        NarrationPauseType.STANDARD -> "Standard Pause"
+    }
 }

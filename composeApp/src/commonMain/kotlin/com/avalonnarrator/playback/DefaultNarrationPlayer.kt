@@ -43,7 +43,6 @@ class DefaultNarrationPlayer(
 
         playbackJob?.cancel()
         playbackJob = scope.launch {
-            audioEngine.startBacktrack(DEFAULT_BACKTRACK_ASSET_PATH, DEFAULT_BACKTRACK_VOLUME)
             _state.value = _state.value.copy(isPlaying = true)
             val startStep = _state.value.currentStepIndex.coerceAtLeast(0)
             try {
@@ -75,7 +74,6 @@ class DefaultNarrationPlayer(
                     delay(step.delayAfterMs)
                 }
             } finally {
-                audioEngine.stopBacktrack()
                 _state.value = _state.value.copy(isPlaying = false, isInDelay = false)
             }
         }
@@ -84,7 +82,6 @@ class DefaultNarrationPlayer(
     override fun pause() {
         playbackJob?.cancel()
         audioEngine.pause()
-        audioEngine.stopBacktrack()
         _state.value = _state.value.copy(isPlaying = false, isInDelay = false)
     }
 
@@ -108,10 +105,5 @@ class DefaultNarrationPlayer(
 
     private fun appendDebug(message: String) {
         _state.value = _state.value.copy(debugMessages = _state.value.debugMessages + message)
-    }
-
-    companion object {
-        private const val DEFAULT_BACKTRACK_ASSET_PATH = "audio/backtrack/the_uncertain_quest.mp3"
-        private const val DEFAULT_BACKTRACK_VOLUME = 0.22f
     }
 }

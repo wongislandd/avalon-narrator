@@ -5,6 +5,11 @@ import com.avalonnarrator.domain.setup.GameModule
 import com.avalonnarrator.domain.setup.GameSetupConfig
 import com.avalonnarrator.domain.roles.RoleId
 
+enum class RulePauseType {
+    REGULAR,
+    ACTION,
+}
+
 data class RuleCondition(
     val requiresAllRoles: Set<RoleId> = emptySet(),
     val requiresAnyRoles: Set<RoleId> = emptySet(),
@@ -40,4 +45,6 @@ data class RuleStepDefinition(
     val clips: List<ClipId>,
     val interClipDelayMs: Long,
     val baseDelayMs: Long,
+    val interClipPauseType: RulePauseType,
+    val postStepPauseType: RulePauseType,
 )

@@ -75,7 +75,6 @@ fun RoleCard(
     selected: Boolean,
     onToggle: () -> Unit,
     onPreviewStart: () -> Unit,
-    onPreviewEnd: () -> Unit,
     showQuantityControls: Boolean = false,
     quantity: Int? = null,
     onDecreaseQuantity: (() -> Unit)? = null,
@@ -118,8 +117,6 @@ fun RoleCard(
 
                         if (!releasedBeforeLongPress) {
                             onPreviewStart()
-                            tryAwaitRelease()
-                            onPreviewEnd()
                         }
                     },
                 )

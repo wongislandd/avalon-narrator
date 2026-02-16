@@ -215,6 +215,11 @@ private fun RecommendedLineupCard(
                 style = MaterialTheme.typography.bodySmall,
                 color = Color(0xFFFFD3CC),
             )
+            Text(
+                text = "Modules: ${lineup.modulesSummary()}",
+                style = MaterialTheme.typography.bodySmall,
+                color = Color(0xFFFFEBC0),
+            )
 
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(

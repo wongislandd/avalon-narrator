@@ -18,6 +18,7 @@ object StandardNarrationRules {
                 ClipId.CLERIC_CLOSE_EYES,
                 ClipId.LEADER_RETURN_FIST,
             )
+            actionPauses()
             baseDelayMs(1400)
         },
         ruleStep(id = "evil_info", phase = RulePhase.EVIL_INFO, order = 10) {
@@ -36,6 +37,7 @@ object StandardNarrationRules {
                 RoleId.SORCERER_EVIL,
             )
             clips(ClipId.EVIL_WAKE_EXCEPT_EVIL_ROGUE, ClipId.EVIL_CLOSE)
+            actionPauses()
             baseDelayMs(1500)
         },
         ruleStep(id = "evil_info", phase = RulePhase.EVIL_INFO, order = 11) {
@@ -55,6 +57,7 @@ object StandardNarrationRules {
                 RoleId.SORCERER_EVIL,
             )
             clips(ClipId.EVIL_WAKE, ClipId.EVIL_CLOSE)
+            actionPauses()
             baseDelayMs(1500)
         },
         ruleStep(id = "merlin_info", phase = RulePhase.GOOD_INFO, order = 20) {
@@ -68,6 +71,7 @@ object StandardNarrationRules {
                 ClipId.MERLIN_CLOSE,
                 ClipId.ALL_KEEP_EYES_CLOSED_FISTS,
             )
+            actionPauses()
             baseDelayMs(1600)
         },
         ruleStep(id = "merlin_info", phase = RulePhase.GOOD_INFO, order = 21) {
@@ -81,6 +85,7 @@ object StandardNarrationRules {
                 ClipId.MERLIN_CLOSE,
                 ClipId.ALL_KEEP_EYES_CLOSED_FISTS,
             )
+            actionPauses()
             baseDelayMs(1600)
         },
         ruleStep(id = "percival_info_pair", phase = RulePhase.GOOD_INFO, order = 30) {
@@ -92,6 +97,7 @@ object StandardNarrationRules {
                 ClipId.MERLIN_AND_MORGANA_RETURN_FIST,
                 ClipId.PERCIVAL_CLOSE,
             )
+            actionPauses()
             baseDelayMs(1600)
         },
         ruleStep(id = "percival_info_merlin_only", phase = RulePhase.GOOD_INFO, order = 31) {
@@ -104,6 +110,7 @@ object StandardNarrationRules {
                 ClipId.MERLIN_RETURN_FIST,
                 ClipId.PERCIVAL_CLOSE,
             )
+            actionPauses()
             baseDelayMs(1600)
         },
         ruleStep(id = "lancelot_counterpart", phase = RulePhase.MODULES, order = 40) {
@@ -111,6 +118,7 @@ object StandardNarrationRules {
             requires(RoleId.LANCELOT_GOOD)
             requires(RoleId.LANCELOT_EVIL)
             clips(ClipId.LANCELOT_WAKE, ClipId.LANCELOT_CLOSE)
+            actionPauses()
             baseDelayMs(1700)
         },
         ruleStep(id = "messenger_pair_info", phase = RulePhase.MODULES, order = 44) {
@@ -122,6 +130,7 @@ object StandardNarrationRules {
                 ClipId.SENIOR_MESSENGER_CLOSE_EYES,
                 ClipId.JUNIOR_MESSENGER_RETURN_FIST,
             )
+            actionPauses()
             baseDelayMs(1300)
         },
         ruleStep(id = "untrustworthy_servant_info", phase = RulePhase.MODULES, order = 45) {
@@ -135,26 +144,31 @@ object StandardNarrationRules {
                 ClipId.UNTRUSTWORTHY_CLOSE_EYES,
                 ClipId.ASSASSIN_RETURN_FIST,
             )
+            actionPauses()
             baseDelayMs(1300)
         },
         ruleStep(id = "lady_module", phase = RulePhase.MODULES, order = 50) {
             requiresModule(GameModule.LADY_OF_LAKE)
             clips(ClipId.LADY_OF_LAKE)
+            actionPauses()
             baseDelayMs(1300)
         },
         ruleStep(id = "lady_module_pass", phase = RulePhase.MODULES, order = 51) {
             requiresModule(GameModule.LADY_OF_LAKE)
             clips(ClipId.LADY_PASS_TOKEN)
+            actionPauses()
             baseDelayMs(1000)
         },
         ruleStep(id = "excalibur_module", phase = RulePhase.MODULES, order = 60) {
             requiresModule(GameModule.EXCALIBUR)
             clips(ClipId.EXCALIBUR)
+            actionPauses()
             baseDelayMs(1300)
         },
         ruleStep(id = "excalibur_switch", phase = RulePhase.MODULES, order = 61) {
             requiresModule(GameModule.EXCALIBUR)
             clips(ClipId.EXCALIBUR_SWITCH_REMINDER)
+            actionPauses()
             baseDelayMs(1100)
         },
         ruleStep(id = "reminder_merlin", phase = RulePhase.CLOSING, order = 80) {

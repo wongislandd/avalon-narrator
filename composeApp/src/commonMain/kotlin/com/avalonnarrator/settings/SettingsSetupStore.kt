@@ -22,7 +22,8 @@ class SettingsSetupStore(
             minionAdjustment = settings.getInt(KEY_MINION_ADJUSTMENT, defaults.minionAdjustment),
             validatorsEnabled = settings.getBoolean(KEY_VALIDATORS_ENABLED, defaults.validatorsEnabled),
             enabledModules = parseModules(settings.getString(KEY_ENABLED_MODULES, "")),
-            narrationPace = enumValueOrDefault(settings.getString(KEY_PACE, defaults.narrationPace.name), defaults.narrationPace),
+            regularPauseMs = settings.getInt(KEY_REGULAR_PAUSE_MS, defaults.regularPauseMs),
+            actionPauseMs = settings.getInt(KEY_ACTION_PAUSE_MS, defaults.actionPauseMs),
             selectedVoicePack = parseVoicePack(
                 settings.getString(KEY_VOICE_PACK, defaults.selectedVoicePack),
                 defaults.selectedVoicePack,
@@ -39,7 +40,8 @@ class SettingsSetupStore(
         settings.putInt(KEY_MINION_ADJUSTMENT, config.minionAdjustment)
         settings.putBoolean(KEY_VALIDATORS_ENABLED, config.validatorsEnabled)
         settings.putString(KEY_ENABLED_MODULES, config.enabledModules.joinToString(SEPARATOR) { it.name })
-        settings.putString(KEY_PACE, config.narrationPace.name)
+        settings.putInt(KEY_REGULAR_PAUSE_MS, config.regularPauseMs)
+        settings.putInt(KEY_ACTION_PAUSE_MS, config.actionPauseMs)
         settings.putString(KEY_VOICE_PACK, config.selectedVoicePack)
         settings.putBoolean(KEY_NARRATION_REMINDERS, config.narrationRemindersEnabled)
         settings.putBoolean(KEY_DEBUG_TIMELINE, config.debugTimelineEnabled)
@@ -56,9 +58,6 @@ class SettingsSetupStore(
         .mapNotNull { token -> token.takeIf { it.isNotBlank() }?.let { runCatching { enumValueOf<GameModule>(it) }.getOrNull() } }
         .toSet()
 
-    private inline fun <reified T : Enum<T>> enumValueOrDefault(raw: String, default: T): T =
-        runCatching { enumValueOf<T>(raw) }.getOrElse { default }
-
     private fun parseVoicePack(raw: String, default: VoicePackId): VoicePackId =
         raw.takeIf { VoicePackCatalog.byId(it) != null } ?: default
 
@@ -69,7 +68,8 @@ class SettingsSetupStore(
         private const val KEY_MINION_ADJUSTMENT = "minion_adjustment"
         private const val KEY_VALIDATORS_ENABLED = "validators_enabled"
         private const val KEY_ENABLED_MODULES = "enabled_modules"
-        private const val KEY_PACE = "narration_pace"
+        private const val KEY_REGULAR_PAUSE_MS = "regular_pause_ms"
+        private const val KEY_ACTION_PAUSE_MS = "action_pause_ms"
         private const val KEY_VOICE_PACK = "voice_pack"
         private const val KEY_NARRATION_REMINDERS = "narration_reminders"
         private const val KEY_DEBUG_TIMELINE = "debug_timeline"

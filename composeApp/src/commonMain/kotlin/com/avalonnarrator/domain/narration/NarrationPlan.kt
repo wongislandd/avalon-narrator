@@ -4,6 +4,11 @@ import com.avalonnarrator.domain.audio.ClipId
 import com.avalonnarrator.domain.audio.VoicePackId
 import com.avalonnarrator.engine.rules.RulePhase
 
+enum class NarrationPauseType {
+    STANDARD,
+    ACTION,
+}
+
 data class PlannedClip(
     val clipId: ClipId,
 )
@@ -13,6 +18,7 @@ data class PlannedStep(
     val phase: RulePhase,
     val clips: List<PlannedClip>,
     val delayAfterMs: Long,
+    val pauseType: NarrationPauseType = NarrationPauseType.STANDARD,
 )
 
 data class NarrationPlan(

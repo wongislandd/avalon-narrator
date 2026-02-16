@@ -1,6 +1,7 @@
 package com.avalonnarrator.domain.recommendation
 
 import com.avalonnarrator.domain.roles.RoleId
+import com.avalonnarrator.domain.setup.GameModule
 
 object RecommendedLineupCatalog {
     private val allLineups: List<RecommendedLineupDefinition> = listOf(
@@ -13,6 +14,7 @@ object RecommendedLineupCatalog {
             specialRoles = setOf(RoleId.MERLIN, RoleId.PERCIVAL, RoleId.ASSASSIN, RoleId.MORGANA),
             loyalServants = 1,
             minions = 0,
+            recommendedModules = emptySet(),
         ),
         RecommendedLineupDefinition(
             id = "p5_oberon_smoke",
@@ -23,6 +25,7 @@ object RecommendedLineupCatalog {
             specialRoles = setOf(RoleId.MERLIN, RoleId.PERCIVAL, RoleId.ASSASSIN, RoleId.OBERON),
             loyalServants = 1,
             minions = 0,
+            recommendedModules = emptySet(),
         ),
         RecommendedLineupDefinition(
             id = "p6_core_court",
@@ -33,6 +36,7 @@ object RecommendedLineupCatalog {
             specialRoles = setOf(RoleId.MERLIN, RoleId.PERCIVAL, RoleId.ASSASSIN, RoleId.MORGANA),
             loyalServants = 2,
             minions = 0,
+            recommendedModules = emptySet(),
         ),
         RecommendedLineupDefinition(
             id = "p6_mordred_pressure",
@@ -43,6 +47,7 @@ object RecommendedLineupCatalog {
             specialRoles = setOf(RoleId.MERLIN, RoleId.PERCIVAL, RoleId.CLERIC, RoleId.ASSASSIN, RoleId.MORDRED),
             loyalServants = 1,
             minions = 0,
+            recommendedModules = emptySet(),
         ),
         RecommendedLineupDefinition(
             id = "p7_tournament_core",
@@ -53,6 +58,7 @@ object RecommendedLineupCatalog {
             specialRoles = setOf(RoleId.MERLIN, RoleId.PERCIVAL, RoleId.ASSASSIN, RoleId.MORGANA, RoleId.MORDRED),
             loyalServants = 2,
             minions = 0,
+            recommendedModules = setOf(GameModule.LADY_OF_LAKE),
         ),
         RecommendedLineupDefinition(
             id = "p7_oberon_gambit",
@@ -63,6 +69,7 @@ object RecommendedLineupCatalog {
             specialRoles = setOf(RoleId.MERLIN, RoleId.PERCIVAL, RoleId.CLERIC, RoleId.ASSASSIN, RoleId.MORGANA, RoleId.OBERON),
             loyalServants = 1,
             minions = 0,
+            recommendedModules = setOf(GameModule.EXCALIBUR, GameModule.LADY_OF_LAKE),
         ),
         RecommendedLineupDefinition(
             id = "p8_royal_intrigue",
@@ -73,6 +80,7 @@ object RecommendedLineupCatalog {
             specialRoles = setOf(RoleId.MERLIN, RoleId.PERCIVAL, RoleId.CLERIC, RoleId.ASSASSIN, RoleId.MORGANA, RoleId.MORDRED),
             loyalServants = 2,
             minions = 0,
+            recommendedModules = setOf(GameModule.LADY_OF_LAKE),
         ),
         RecommendedLineupDefinition(
             id = "p8_twin_lancelots",
@@ -90,6 +98,7 @@ object RecommendedLineupCatalog {
             ),
             loyalServants = 2,
             minions = 0,
+            recommendedModules = setOf(GameModule.EXCALIBUR),
         ),
         RecommendedLineupDefinition(
             id = "p9_high_council",
@@ -108,6 +117,7 @@ object RecommendedLineupCatalog {
             ),
             loyalServants = 2,
             minions = 0,
+            recommendedModules = setOf(GameModule.LADY_OF_LAKE),
         ),
         RecommendedLineupDefinition(
             id = "p9_messenger_network",
@@ -126,6 +136,7 @@ object RecommendedLineupCatalog {
             ),
             loyalServants = 2,
             minions = 0,
+            recommendedModules = setOf(GameModule.EXCALIBUR),
         ),
         RecommendedLineupDefinition(
             id = "p10_grand_classic",
@@ -144,6 +155,7 @@ object RecommendedLineupCatalog {
             ),
             loyalServants = 3,
             minions = 0,
+            recommendedModules = setOf(GameModule.LADY_OF_LAKE),
         ),
         RecommendedLineupDefinition(
             id = "p10_arcane_war",
@@ -163,6 +175,7 @@ object RecommendedLineupCatalog {
             ),
             loyalServants = 2,
             minions = 0,
+            recommendedModules = setOf(GameModule.EXCALIBUR),
         ),
     )
 

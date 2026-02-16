@@ -64,7 +64,7 @@ fun SetupModuleInfoScreen(
                 )
             }
             Text(
-                text = "Module Codex",
+                text = "Modules",
                 style = MaterialTheme.typography.headlineSmall,
                 color = Color(0xFFFFEBC0),
                 fontWeight = FontWeight.Bold,

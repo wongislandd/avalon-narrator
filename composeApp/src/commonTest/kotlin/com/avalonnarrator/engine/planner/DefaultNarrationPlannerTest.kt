@@ -5,7 +5,6 @@ import com.avalonnarrator.domain.audio.VoicePackIds
 import com.avalonnarrator.domain.roles.RoleId
 import com.avalonnarrator.domain.setup.GameSetupConfig
 import com.avalonnarrator.domain.setup.GameModule
-import com.avalonnarrator.domain.setup.NarrationPace
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -26,19 +25,6 @@ class DefaultNarrationPlannerTest {
         assertTrue(plan.steps.first().stepId.startsWith("intro"))
         assertTrue(plan.steps.last().stepId.startsWith("closing"))
         assertEquals(VoicePackIds.WIZARD, plan.voicePackId)
-    }
-
-    @Test
-    fun `applies pace multiplier to delay`() {
-        val planner = DefaultNarrationPlanner()
-
-        val fastPlan = planner.plan(GameSetupConfig(narrationPace = NarrationPace.FAST))
-        val slowPlan = planner.plan(GameSetupConfig(narrationPace = NarrationPace.SLOW))
-
-        val fastFirstDelay = fastPlan.steps.first().delayAfterMs
-        val slowFirstDelay = slowPlan.steps.first().delayAfterMs
-
-        assertTrue(slowFirstDelay > fastFirstDelay)
     }
 
     @Test
@@ -161,5 +147,45 @@ class DefaultNarrationPlannerTest {
         )
         assertEquals(VoicePackIds.WIZARD, wizard.voicePackId)
         assertEquals(VoicePackIds.RAINBIRD_EN, rainbird.voicePackId)
+    }
+
+    @Test
+    fun `uses regular and action pause categories from config`() {
+        val planner = DefaultNarrationPlanner()
+        val config = GameSetupConfig(
+            selectedRoles = setOf(RoleId.MERLIN, RoleId.ASSASSIN),
+            regularPauseMs = 1_000,
+            actionPauseMs = 4_000,
+        )
+
+        val plan = planner.plan(config)
+
+        val introFirstLine = plan.steps.first { it.stepId == "intro.line1" }
+        val evilInfoFirstLine = plan.steps.first { it.stepId == "evil_info.line1" }
+
+        assertEquals(1_000L, introFirstLine.delayAfterMs)
+        assertEquals(4_000L, evilInfoFirstLine.delayAfterMs)
+    }
+
+    @Test
+    fun `uses action pause only for inspection windows and regular for quick actions`() {
+        val planner = DefaultNarrationPlanner()
+        val config = GameSetupConfig(
+            selectedRoles = setOf(RoleId.CLERIC, RoleId.ASSASSIN),
+            regularPauseMs = 1_000,
+            actionPauseMs = 4_000,
+        )
+
+        val plan = planner.plan(config)
+
+        val clericThumb = plan.steps.first { it.stepId == "cleric_alignment_check.line1" }
+        val clericOpenEyes = plan.steps.first { it.stepId == "cleric_alignment_check.line2" }
+        val clericCloseEyes = plan.steps.first { it.stepId == "cleric_alignment_check.line3" }
+        val leaderReturnFist = plan.steps.first { it.stepId == "cleric_alignment_check.line4" }
+
+        assertEquals(1_000L, clericThumb.delayAfterMs)
+        assertEquals(4_000L, clericOpenEyes.delayAfterMs)
+        assertEquals(1_000L, clericCloseEyes.delayAfterMs)
+        assertEquals(1_000L, leaderReturnFist.delayAfterMs)
     }
 }

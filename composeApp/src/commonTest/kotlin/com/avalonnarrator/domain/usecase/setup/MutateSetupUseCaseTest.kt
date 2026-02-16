@@ -107,4 +107,17 @@ class MutateSetupUseCaseTest {
         assertEquals(8, applied.playerCount)
         assertTrue(GameModule.LANCELOT in applied.enabledModules)
     }
+
+    @Test
+    fun `pause mutations are clamped and applied`() {
+        val initial = GameSetupConfig()
+
+        val withRegular = mutate(initial, SetupMutation.SetRegularPauseMs(1_500))
+        val withAction = mutate(withRegular, SetupMutation.SetActionPauseMs(20_000))
+        val withLowRegular = mutate(withAction, SetupMutation.SetRegularPauseMs(-1_000))
+
+        assertEquals(1_500, withRegular.regularPauseMs)
+        assertEquals(15_000, withAction.actionPauseMs)
+        assertEquals(0, withLowRegular.regularPauseMs)
+    }
 }

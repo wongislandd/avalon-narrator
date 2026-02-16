@@ -19,6 +19,8 @@ class RuleStepBuilder internal constructor(
     private var maxPlayers: Int? = null
     private var interClipDelayMs: Long = 900L
     private var baseDelayMs: Long = 1200L
+    private var interClipPauseType: RulePauseType = RulePauseType.REGULAR
+    private var postStepPauseType: RulePauseType = RulePauseType.REGULAR
 
     fun requires(role: RoleId) {
         requiresAllRoles += role
@@ -57,6 +59,19 @@ class RuleStepBuilder internal constructor(
         baseDelayMs = delay
     }
 
+    fun interClipPauseType(type: RulePauseType) {
+        interClipPauseType = type
+    }
+
+    fun postStepPauseType(type: RulePauseType) {
+        postStepPauseType = type
+    }
+
+    fun actionPauses() {
+        interClipPauseType = RulePauseType.ACTION
+        postStepPauseType = RulePauseType.ACTION
+    }
+
     internal fun build(): RuleStepDefinition = RuleStepDefinition(
         id = id,
         phase = phase,
@@ -73,6 +88,8 @@ class RuleStepBuilder internal constructor(
         clips = clips.toList(),
         interClipDelayMs = interClipDelayMs,
         baseDelayMs = baseDelayMs,
+        interClipPauseType = interClipPauseType,
+        postStepPauseType = postStepPauseType,
     )
 }
 

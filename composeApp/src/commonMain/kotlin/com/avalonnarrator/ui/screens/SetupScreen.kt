@@ -251,7 +251,6 @@ fun SetupScreen(
                             }
                         },
                         onPreviewStart = { onEvent(SetupUiEvent.ShowRolePreview(role)) },
-                        onPreviewEnd = { onEvent(SetupUiEvent.HideRolePreview) },
                         showQuantityControls = isLoyalServant && (quantity ?: 0) > 0,
                         quantity = quantity,
                         onDecreaseQuantity = if (isLoyalServant) {
@@ -318,7 +317,6 @@ fun SetupScreen(
                             }
                         },
                         onPreviewStart = { onEvent(SetupUiEvent.ShowRolePreview(role)) },
-                        onPreviewEnd = { onEvent(SetupUiEvent.HideRolePreview) },
                         showQuantityControls = isMinion && (quantity ?: 0) > 0,
                         quantity = quantity,
                         onDecreaseQuantity = if (isMinion) {
@@ -377,7 +375,6 @@ fun SetupScreen(
                     selected = GameModule.EXCALIBUR in uiState.config.enabledModules,
                     onToggle = { onEvent(SetupUiEvent.ToggleModule(GameModule.EXCALIBUR)) },
                     onPreviewStart = { onEvent(SetupUiEvent.ShowModulePreview(GameModule.EXCALIBUR)) },
-                    onPreviewEnd = { onEvent(SetupUiEvent.HideModulePreview) },
                 )
                 ModuleSelectionCard(
                     module = GameModule.LADY_OF_LAKE,
@@ -385,7 +382,6 @@ fun SetupScreen(
                     selected = GameModule.LADY_OF_LAKE in uiState.config.enabledModules,
                     onToggle = { onEvent(SetupUiEvent.ToggleModule(GameModule.LADY_OF_LAKE)) },
                     onPreviewStart = { onEvent(SetupUiEvent.ShowModulePreview(GameModule.LADY_OF_LAKE)) },
-                    onPreviewEnd = { onEvent(SetupUiEvent.HideModulePreview) },
                 )
             }
             Spacer(Modifier.height(24.dp))
@@ -393,28 +389,17 @@ fun SetupScreen(
 
         when {
             uiState.previewRole != null -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color(0xB815100A)),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth(0.78f)
-                            .aspectRatio(0.71f)
-                            .padding(8.dp),
-                    ) {
-                        HolographicRolePreviewCard(
-                            role = uiState.previewRole,
-                            modifier = Modifier.fillMaxSize(),
-                        )
-                    }
-                }
+                RolePreviewOverlay(
+                    role = uiState.previewRole,
+                    onDismiss = { onEvent(SetupUiEvent.HideRolePreview) },
+                )
             }
 
             uiState.previewModule != null -> {
-                ModulePreviewOverlay(module = uiState.previewModule)
+                ModulePreviewOverlay(
+                    module = uiState.previewModule,
+                    onDismiss = { onEvent(SetupUiEvent.HideModulePreview) },
+                )
             }
         }
     }
@@ -521,7 +506,6 @@ private fun ModuleSelectionCard(
     selected: Boolean,
     onToggle: () -> Unit,
     onPreviewStart: () -> Unit,
-    onPreviewEnd: () -> Unit,
 ) {
     val borderColor = if (selected) Color(0xFFFFE8AA) else Color(0xFF6D5631)
     val backgroundBrush = if (selected) {
@@ -541,8 +525,6 @@ private fun ModuleSelectionCard(
                         } ?: false
                         if (!releasedBeforeLongPress) {
                             onPreviewStart()
-                            tryAwaitRelease()
-                            onPreviewEnd()
                         }
                     },
                 )
@@ -589,12 +571,49 @@ private fun moduleArtwork(module: GameModule): DrawableResource = when (module) 
 }
 
 @Composable
-private fun ModulePreviewOverlay(module: GameModule) {
+private fun RolePreviewOverlay(
+    role: com.avalonnarrator.domain.roles.RoleDefinition,
+    onDismiss: () -> Unit,
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xB815100A))
+            .pointerInput(Unit) {
+                detectTapGestures(onTap = { onDismiss() })
+            },
+        contentAlignment = Alignment.Center,
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth(0.78f)
+                .aspectRatio(0.71f)
+                .padding(8.dp)
+                .pointerInput(role.id) {
+                    detectTapGestures(onTap = { })
+                },
+        ) {
+            HolographicRolePreviewCard(
+                role = role,
+                modifier = Modifier.fillMaxSize(),
+            )
+        }
+    }
+}
+
+@Composable
+private fun ModulePreviewOverlay(
+    module: GameModule,
+    onDismiss: () -> Unit,
+) {
     val content = moduleGuideContent(module)
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xB815100A)),
+            .background(Color(0xB815100A))
+            .pointerInput(Unit) {
+                detectTapGestures(onTap = { onDismiss() })
+            },
         contentAlignment = Alignment.Center,
     ) {
         Surface(
@@ -602,7 +621,10 @@ private fun ModulePreviewOverlay(module: GameModule) {
             color = Color(0xE0261A10),
             modifier = Modifier
                 .fillMaxWidth(0.85f)
-                .padding(12.dp),
+                .padding(12.dp)
+                .pointerInput(module) {
+                    detectTapGestures(onTap = { })
+                },
         ) {
             Column(
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 18.dp),

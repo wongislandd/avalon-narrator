@@ -3,6 +3,7 @@ package com.avalonnarrator.domain.recommendation
 import com.avalonnarrator.domain.roles.Alignment
 import com.avalonnarrator.domain.roles.RoleCatalog
 import com.avalonnarrator.domain.roles.RoleId
+import com.avalonnarrator.domain.setup.GameModule
 import com.avalonnarrator.domain.setup.RosterBuilder
 
 data class RecommendedLineupDefinition(
@@ -14,6 +15,7 @@ data class RecommendedLineupDefinition(
     val specialRoles: Set<RoleId>,
     val loyalServants: Int,
     val minions: Int,
+    val recommendedModules: Set<GameModule> = emptySet(),
 ) {
     init {
         require(playerCount in 5..10) { "Lineup player count must be between 5 and 10." }
@@ -32,6 +34,12 @@ data class RecommendedLineupDefinition(
         val expectedEvilCount = RosterBuilder.expectedEvilCount(playerCount)
         require(expectedEvilCount == null || evilCount == expectedEvilCount) {
             "Lineup $id has $evilCount evil roles but expected $expectedEvilCount for $playerCount players."
+        }
+        require(GameModule.LANCELOT !in recommendedModules) {
+            "Lineup $id should not explicitly recommend Lancelot module; it is inferred from Lancelot roles."
+        }
+        require(GameModule.LADY_OF_LAKE !in recommendedModules || playerCount >= 7) {
+            "Lineup $id should only recommend Lady of the Lake at 7+ players."
         }
     }
 
@@ -58,4 +66,20 @@ data class RecommendedLineupDefinition(
         }
         return evilSpecial.joinToString(", ")
     }
+
+    fun modulesSummary(): String =
+        if (recommendedModules.isEmpty()) {
+            "None"
+        } else {
+            recommendedModules
+                .map { module ->
+                    when (module) {
+                        GameModule.EXCALIBUR -> "Excalibur"
+                        GameModule.LADY_OF_LAKE -> "Lady of the Lake"
+                        GameModule.LANCELOT -> "Lancelot"
+                    }
+                }
+                .sorted()
+                .joinToString(", ")
+        }
 }

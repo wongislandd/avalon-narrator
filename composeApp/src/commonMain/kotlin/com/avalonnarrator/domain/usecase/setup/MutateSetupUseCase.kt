@@ -69,7 +69,8 @@ class MutateSetupUseCase(
                 }
             }
 
-            is SetupMutation.SetNarrationPace -> current.copy(narrationPace = mutation.pace)
+            is SetupMutation.SetRegularPauseMs -> current.copy(regularPauseMs = mutation.value.coerceIn(0, 15_000))
+            is SetupMutation.SetActionPauseMs -> current.copy(actionPauseMs = mutation.value.coerceIn(0, 15_000))
             is SetupMutation.SetVoicePack -> current.copy(selectedVoicePack = mutation.voicePackId)
             is SetupMutation.ApplyRecommendedLineup -> {
                 current.copy(

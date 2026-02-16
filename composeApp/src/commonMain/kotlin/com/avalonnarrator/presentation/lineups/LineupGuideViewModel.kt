@@ -46,6 +46,7 @@ class LineupGuideViewModel(
                         specialRoles = event.lineup.specialRoles,
                         loyalServantCount = event.lineup.loyalServants,
                         minionCount = event.lineup.minions,
+                        enabledModules = event.lineup.recommendedModules,
                     ),
                 )
                 viewModelScope.launch {
