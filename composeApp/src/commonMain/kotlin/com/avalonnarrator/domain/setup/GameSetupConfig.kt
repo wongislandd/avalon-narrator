@@ -15,5 +15,4 @@ data class GameSetupConfig(
     val actionPauseMs: Int = 4_000,
     val selectedVoicePack: VoicePackId = VoicePackIds.WIZARD,
     val narrationRemindersEnabled: Boolean = false,
-    val debugTimelineEnabled: Boolean = false,
 )

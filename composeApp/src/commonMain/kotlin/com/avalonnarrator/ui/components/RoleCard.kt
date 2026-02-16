@@ -111,7 +111,8 @@ fun RoleCard(
                 detectTapGestures(
                     onTap = { onToggle() },
                     onPress = {
-                        val releasedBeforeLongPress = withTimeoutOrNull(viewConfiguration.longPressTimeoutMillis.toLong()) {
+                        val holdToPreviewMs = viewConfiguration.longPressTimeoutMillis.toLong() + 350L
+                        val releasedBeforeLongPress = withTimeoutOrNull(holdToPreviewMs) {
                             tryAwaitRelease()
                         } ?: false
 

@@ -71,10 +71,6 @@ class SettingsViewModel(
                 SetupMutation.SetNarrationRemindersEnabled(event.enabled),
             )
 
-            is SettingsUiEvent.ToggleDebugTimeline -> setupSession.mutate(
-                SetupMutation.SetDebugTimelineEnabled(event.enabled),
-            )
-
             SettingsUiEvent.Back -> {
                 stopPreview()
                 viewModelScope.launch {

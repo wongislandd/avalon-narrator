@@ -29,7 +29,6 @@ class SettingsSetupStore(
                 defaults.selectedVoicePack,
             ),
             narrationRemindersEnabled = settings.getBoolean(KEY_NARRATION_REMINDERS, defaults.narrationRemindersEnabled),
-            debugTimelineEnabled = settings.getBoolean(KEY_DEBUG_TIMELINE, defaults.debugTimelineEnabled),
         )
     }
 
@@ -44,7 +43,6 @@ class SettingsSetupStore(
         settings.putInt(KEY_ACTION_PAUSE_MS, config.actionPauseMs)
         settings.putString(KEY_VOICE_PACK, config.selectedVoicePack)
         settings.putBoolean(KEY_NARRATION_REMINDERS, config.narrationRemindersEnabled)
-        settings.putBoolean(KEY_DEBUG_TIMELINE, config.debugTimelineEnabled)
     }
 
     private fun parseRoles(raw: String): Set<RoleId> = raw
@@ -72,7 +70,6 @@ class SettingsSetupStore(
         private const val KEY_ACTION_PAUSE_MS = "action_pause_ms"
         private const val KEY_VOICE_PACK = "voice_pack"
         private const val KEY_NARRATION_REMINDERS = "narration_reminders"
-        private const val KEY_DEBUG_TIMELINE = "debug_timeline"
         private const val SEPARATOR = ","
     }
 }

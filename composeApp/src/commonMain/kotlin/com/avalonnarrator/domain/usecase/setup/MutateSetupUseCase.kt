@@ -80,7 +80,6 @@ class MutateSetupUseCase(
                     enabledModules = mutation.enabledModules,
                 )
             }
-            is SetupMutation.SetDebugTimelineEnabled -> current.copy(debugTimelineEnabled = mutation.enabled)
             is SetupMutation.SetValidatorsEnabled -> current.copy(validatorsEnabled = mutation.enabled)
             is SetupMutation.SetNarrationRemindersEnabled -> current.copy(narrationRemindersEnabled = mutation.enabled)
         }

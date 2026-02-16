@@ -18,7 +18,6 @@ sealed interface SetupMutation {
         val minionCount: Int,
         val enabledModules: Set<GameModule> = emptySet(),
     ) : SetupMutation
-    data class SetDebugTimelineEnabled(val enabled: Boolean) : SetupMutation
     data class SetValidatorsEnabled(val enabled: Boolean) : SetupMutation
     data class SetNarrationRemindersEnabled(val enabled: Boolean) : SetupMutation
 }

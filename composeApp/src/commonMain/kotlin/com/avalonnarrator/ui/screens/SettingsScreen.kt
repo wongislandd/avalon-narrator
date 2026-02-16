@@ -80,6 +80,46 @@ fun SettingsScreen(
                     color = Color(0xFFFFEBC0),
                 )
             }
+
+            Spacer(Modifier.height(16.dp))
+            SectionTitle("Voice Pack")
+            Spacer(Modifier.height(10.dp))
+            Surface(
+                shape = RoundedCornerShape(14.dp),
+                color = Color(0x5C291A0F),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .border(1.dp, Color(0x66D5AA62), RoundedCornerShape(14.dp)),
+            ) {
+                Column(
+                    modifier = Modifier.padding(12.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    Text(
+                        text = "Selected: ${selectedVoicePack?.displayName ?: config.selectedVoicePack}",
+                        color = Color(0xFFFFEBC0),
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.SemiBold,
+                    )
+                    if (!selectedVoicePack?.description.isNullOrBlank()) {
+                        Text(
+                            selectedVoicePack?.description.orEmpty(),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Color(0xFFE6D3B2),
+                        )
+                    }
+                    Button(
+                        onClick = { onEvent(SettingsUiEvent.OpenVoiceSelection) },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFF9C7A35),
+                            contentColor = Color(0xFFFFF3D6),
+                        ),
+                    ) {
+                        Text("Open Voice Selection")
+                    }
+                }
+            }
+
             Spacer(Modifier.height(16.dp))
             SectionTitle("Pauses")
             Spacer(Modifier.height(10.dp))
@@ -112,54 +152,11 @@ fun SettingsScreen(
             }
 
             Spacer(Modifier.height(16.dp))
-            SectionTitle("Voice Pack")
-            Spacer(Modifier.height(10.dp))
-            Surface(
-                shape = RoundedCornerShape(14.dp),
-                color = Color(0x5C291A0F),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(1.dp, Color(0x66D5AA62), RoundedCornerShape(14.dp)),
-            ) {
-                Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text(
-                        text = "Selected: ${selectedVoicePack?.displayName ?: config.selectedVoicePack}",
-                        color = Color(0xFFFFEBC0),
-                        style = MaterialTheme.typography.titleSmall,
-                        fontWeight = FontWeight.SemiBold,
-                    )
-                    if (!selectedVoicePack?.description.isNullOrBlank()) {
-                        Text(
-                            selectedVoicePack?.description.orEmpty(),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = Color(0xFFE6D3B2),
-                        )
-                    }
-                    Button(
-                        onClick = { onEvent(SettingsUiEvent.OpenVoiceSelection) },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFF9C7A35),
-                            contentColor = Color(0xFFFFF3D6),
-                        ),
-                    ) {
-                        Text("Open Voice Selection")
-                    }
-                }
-            }
-
-            Spacer(Modifier.height(16.dp))
             ModuleRow(
                 label = "Include Role Reminders",
                 description = "Enables readout of important information on characters during the narration phase.",
                 checked = config.narrationRemindersEnabled,
                 onCheckedChange = { onEvent(SettingsUiEvent.ToggleReminders(it)) },
-            )
-
-            Spacer(Modifier.height(10.dp))
-            ModuleRow(
-                label = "Show Debug Timeline",
-                checked = config.debugTimelineEnabled,
-                onCheckedChange = { onEvent(SettingsUiEvent.ToggleDebugTimeline(it)) },
             )
 
             Spacer(Modifier.height(16.dp))
@@ -261,7 +258,7 @@ private fun PauseControlRow(
                 text = formatPauseSeconds(valueMs),
                 color = Color(0xFFE6D3B2),
                 style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
             )
         }
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {

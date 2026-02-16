@@ -27,7 +27,6 @@ class SettingsSetupStoreTest {
             actionPauseMs = 5_000,
             selectedVoicePack = VoicePackIds.WIZARD,
             narrationRemindersEnabled = true,
-            debugTimelineEnabled = true,
         )
 
         store.save(config)

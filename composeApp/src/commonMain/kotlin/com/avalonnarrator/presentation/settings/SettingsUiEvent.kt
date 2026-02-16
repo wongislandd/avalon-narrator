@@ -13,6 +13,5 @@ sealed interface SettingsUiEvent {
     data object CloseVoiceSelection : SettingsUiEvent
     data class PreviewVoicePack(val voicePackId: VoicePackId) : SettingsUiEvent
     data class ToggleReminders(val enabled: Boolean) : SettingsUiEvent
-    data class ToggleDebugTimeline(val enabled: Boolean) : SettingsUiEvent
     data object Back : SettingsUiEvent
 }

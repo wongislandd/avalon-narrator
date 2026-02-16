@@ -194,6 +194,7 @@ fun SetupScreen(
             }
             Spacer(Modifier.height(14.dp))
             ValidationIssuesDropdown(
+                validatorsEnabled = uiState.config.validatorsEnabled,
                 blockingIssues = uiState.blockingIssues,
                 nonBlockingIssues = uiState.nonBlockingIssues,
                 expanded = issuesExpanded,
@@ -407,22 +408,26 @@ fun SetupScreen(
 
 @Composable
 private fun ValidationIssuesDropdown(
+    validatorsEnabled: Boolean,
     blockingIssues: List<SetupIssue>,
     nonBlockingIssues: List<SetupIssue>,
     expanded: Boolean,
     onToggleExpanded: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val isDisabled = !validatorsEnabled
     val errorCount = blockingIssues.size
     val warningCount = nonBlockingIssues.size
     val hasErrors = errorCount > 0
     val hasWarnings = warningCount > 0
     val accent = when {
+        isDisabled -> Color(0xFFAEA79A)
         hasErrors -> Color(0xFFFFB5AD)
         hasWarnings -> Color(0xFFFFE2A6)
         else -> Color(0xFFBFE8B7)
     }
     val panelColor = when {
+        isDisabled -> Color(0x553B332A)
         hasErrors -> Color(0xCC6F1F1A)
         hasWarnings -> Color(0xAA5A3C1C)
         else -> Color(0x882D4A24)
@@ -438,7 +443,13 @@ private fun ValidationIssuesDropdown(
                 modifier = Modifier
                     .fillMaxWidth()
                     .heightIn(min = 44.dp)
-                    .clickable(onClick = onToggleExpanded)
+                    .let { base ->
+                        if (validatorsEnabled) {
+                            base.clickable(onClick = onToggleExpanded)
+                        } else {
+                            base
+                        }
+                    }
                     .padding(horizontal = 12.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -452,20 +463,23 @@ private fun ValidationIssuesDropdown(
                 )
                 Text(
                     text = when {
+                        isDisabled -> "Enforce game rules disabled"
                         hasErrors || hasWarnings -> "$errorCount errors • $warningCount warnings"
                         else -> "No issues"
                     },
                     color = accent,
                     style = MaterialTheme.typography.labelLarge,
                 )
-                Icon(
-                    imageVector = if (expanded) Icons.Filled.ExpandLess else Icons.Filled.ExpandMore,
-                    contentDescription = if (expanded) "Collapse validation issues" else "Expand validation issues",
-                    tint = accent,
-                )
+                if (validatorsEnabled) {
+                    Icon(
+                        imageVector = if (expanded) Icons.Filled.ExpandLess else Icons.Filled.ExpandMore,
+                        contentDescription = if (expanded) "Collapse validation issues" else "Expand validation issues",
+                        tint = accent,
+                    )
+                }
             }
 
-            if (expanded) {
+            if (expanded && validatorsEnabled) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -520,7 +534,8 @@ private fun ModuleSelectionCard(
                 detectTapGestures(
                     onTap = { onToggle() },
                     onPress = {
-                        val releasedBeforeLongPress = withTimeoutOrNull(viewConfiguration.longPressTimeoutMillis.toLong()) {
+                        val holdToPreviewMs = viewConfiguration.longPressTimeoutMillis.toLong() + 350L
+                        val releasedBeforeLongPress = withTimeoutOrNull(holdToPreviewMs) {
                             tryAwaitRelease()
                         } ?: false
                         if (!releasedBeforeLongPress) {

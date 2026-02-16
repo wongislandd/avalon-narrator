@@ -12,6 +12,17 @@ kotlin {
         }
     }
 
+    @OptIn(org.jetbrains.kotlin.gradle.ExperimentalWasmDsl::class)
+    wasmJs {
+        moduleName = "composeApp"
+        browser {
+            commonWebpackConfig {
+                outputFileName = "composeApp.js"
+            }
+        }
+        binaries.executable()
+    }
+
     listOf(
         iosX64(),
         iosArm64(),
@@ -64,6 +75,10 @@ kotlin {
             iosSimulatorArm64Main.dependsOn(this)
         }
     }
+}
+
+compose.experimental {
+    web.application {}
 }
 
 android {
