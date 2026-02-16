@@ -6,6 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -19,6 +20,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -36,8 +38,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -62,6 +67,8 @@ import com.avalonnarrator.presentation.setup.SetupUiState
 import com.avalonnarrator.ui.components.HolographicRolePreviewCard
 import com.avalonnarrator.ui.components.RoleCard
 import androidx.compose.foundation.gestures.detectTapGestures
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
@@ -91,7 +98,7 @@ fun SetupScreen(
         .count { module -> module in uiState.config.enabledModules }
     var issuesExpanded by rememberSaveable { mutableStateOf(false) }
 
-    Box(
+    BoxWithConstraints(
         modifier = Modifier
             .fillMaxSize()
             .background(
@@ -100,6 +107,14 @@ fun SetupScreen(
                 ),
             )
     ) {
+        val roleGridMaxItemsInEachRow = when {
+            maxWidth >= 1300.dp -> 6
+            maxWidth >= 1100.dp -> 5
+            maxWidth >= 900.dp -> 4
+            maxWidth >= 700.dp -> 3
+            else -> 2
+        }
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -190,7 +205,7 @@ fun SetupScreen(
                     .fillMaxWidth()
                     .padding(horizontal = contentSidePadding),
             ) {
-                Text(if (uiState.canStartNarration) "Start Narration" else "Fix Errors To Start")
+                Text(if (uiState.canStartNarration) "Start Narration" else "Fix errors to start")
             }
             Spacer(Modifier.height(14.dp))
             ValidationIssuesDropdown(
@@ -236,7 +251,7 @@ fun SetupScreen(
                     .padding(horizontal = 8.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterHorizontally),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
-                maxItemsInEachRow = 2,
+                maxItemsInEachRow = roleGridMaxItemsInEachRow,
             ) {
                 uiState.goodRoles.forEach { role ->
                     val isLoyalServant = role.id == RoleId.LOYAL_SERVANT
@@ -302,7 +317,7 @@ fun SetupScreen(
                     .padding(horizontal = 8.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterHorizontally),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
-                maxItemsInEachRow = 2,
+                maxItemsInEachRow = roleGridMaxItemsInEachRow,
             ) {
                 uiState.evilRoles.forEach { role ->
                     val isMinion = role.id == RoleId.MINION
@@ -521,6 +536,8 @@ private fun ModuleSelectionCard(
     onToggle: () -> Unit,
     onPreviewStart: () -> Unit,
 ) {
+    var suppressNextTap by remember(module) { mutableStateOf(false) }
+    val gestureScope = rememberCoroutineScope()
     val borderColor = if (selected) Color(0xFFFFE8AA) else Color(0xFF6D5631)
     val backgroundBrush = if (selected) {
         Brush.verticalGradient(listOf(Color(0xFF8A6430), Color(0xFF2A1B10)))
@@ -532,14 +549,26 @@ private fun ModuleSelectionCard(
         modifier = Modifier
             .pointerInput(module) {
                 detectTapGestures(
-                    onTap = { onToggle() },
+                    onTap = {
+                        if (suppressNextTap) {
+                            suppressNextTap = false
+                            return@detectTapGestures
+                        }
+                        onToggle()
+                    },
                     onPress = {
-                        val holdToPreviewMs = viewConfiguration.longPressTimeoutMillis.toLong() + 350L
-                        val releasedBeforeLongPress = withTimeoutOrNull(holdToPreviewMs) {
+                        val holdToPreviewMs = viewConfiguration.longPressTimeoutMillis
+                        val releasedOrCanceledBeforeTimeout = withTimeoutOrNull(holdToPreviewMs) {
                             tryAwaitRelease()
-                        } ?: false
-                        if (!releasedBeforeLongPress) {
+                        }
+                        if (releasedOrCanceledBeforeTimeout == null) {
+                            suppressNextTap = true
                             onPreviewStart()
+                            gestureScope.launch {
+                                delay(700)
+                                suppressNextTap = false
+                            }
+                            tryAwaitRelease()
                         }
                     },
                 )
@@ -590,18 +619,32 @@ private fun RolePreviewOverlay(
     role: com.avalonnarrator.domain.roles.RoleDefinition,
     onDismiss: () -> Unit,
 ) {
-    Box(
+    var dismissEnabled by remember(role.id) { mutableStateOf(false) }
+    LaunchedEffect(role.id) {
+        delay(250)
+        dismissEnabled = true
+    }
+
+    BoxWithConstraints(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xB815100A))
             .pointerInput(Unit) {
-                detectTapGestures(onTap = { onDismiss() })
+                detectTapGestures(onTap = {
+                    if (dismissEnabled) {
+                        onDismiss()
+                    }
+                })
             },
         contentAlignment = Alignment.Center,
     ) {
+        val previewWidth = (maxWidth * 0.78f)
+            .coerceAtMost(440.dp)
+            .coerceAtLeast(260.dp)
+
         Box(
             modifier = Modifier
-                .fillMaxWidth(0.78f)
+                .width(previewWidth)
                 .aspectRatio(0.71f)
                 .padding(8.dp)
                 .pointerInput(role.id) {
@@ -621,13 +664,23 @@ private fun ModulePreviewOverlay(
     module: GameModule,
     onDismiss: () -> Unit,
 ) {
+    var dismissEnabled by remember(module) { mutableStateOf(false) }
+    LaunchedEffect(module) {
+        delay(250)
+        dismissEnabled = true
+    }
+
     val content = moduleGuideContent(module)
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xB815100A))
             .pointerInput(Unit) {
-                detectTapGestures(onTap = { onDismiss() })
+                detectTapGestures(onTap = {
+                    if (dismissEnabled) {
+                        onDismiss()
+                    }
+                })
             },
         contentAlignment = Alignment.Center,
     ) {

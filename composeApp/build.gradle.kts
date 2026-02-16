@@ -77,10 +77,6 @@ kotlin {
     }
 }
 
-compose.experimental {
-    web.application {}
-}
-
 android {
     namespace = "com.announcerforavalon"
     compileSdk = 35

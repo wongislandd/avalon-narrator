@@ -26,7 +26,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -66,6 +70,8 @@ import avalon_narrator.composeapp.generated.resources.troublemaker
 import avalon_narrator.composeapp.generated.resources.untrustworthy_servant
 import com.avalonnarrator.domain.roles.RoleDefinition
 import kotlinx.coroutines.withTimeoutOrNull
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 
@@ -81,6 +87,8 @@ fun RoleCard(
     onIncreaseQuantity: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
 ) {
+    var suppressNextTap by remember(role.id) { mutableStateOf(false) }
+    val gestureScope = rememberCoroutineScope()
     val infinite = rememberInfiniteTransition(label = "selected_glow")
     val shimmerProgress = infinite.animateFloat(
         initialValue = -1.2f,
@@ -109,15 +117,26 @@ fun RoleCard(
         modifier = modifier
             .pointerInput(role.id) {
                 detectTapGestures(
-                    onTap = { onToggle() },
+                    onTap = {
+                        if (suppressNextTap) {
+                            suppressNextTap = false
+                            return@detectTapGestures
+                        }
+                        onToggle()
+                    },
                     onPress = {
                         val holdToPreviewMs = viewConfiguration.longPressTimeoutMillis.toLong() + 350L
-                        val releasedBeforeLongPress = withTimeoutOrNull(holdToPreviewMs) {
+                        val releasedOrCanceledBeforeTimeout = withTimeoutOrNull(holdToPreviewMs) {
                             tryAwaitRelease()
-                        } ?: false
-
-                        if (!releasedBeforeLongPress) {
+                        }
+                        if (releasedOrCanceledBeforeTimeout == null) {
+                            suppressNextTap = true
                             onPreviewStart()
+                            gestureScope.launch {
+                                delay(700)
+                                suppressNextTap = false
+                            }
+                            tryAwaitRelease()
                         }
                     },
                 )

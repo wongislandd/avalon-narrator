@@ -51,6 +51,6 @@ class BuildNarratorPreviewUseCaseTest {
         assertEquals(5, preview.selectedTotal)
         assertEquals(2, preview.timelineBlocks.size)
         assertTrue(preview.timelineBlocks.first() is NarratorTimelineBlock.Info)
-        assertTrue(preview.timelineBlocks.last() is NarratorTimelineBlock.Delay)
+        assertTrue(preview.timelineBlocks.last() is NarratorTimelineBlock.Pause)
     }
 }

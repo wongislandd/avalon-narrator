@@ -1,7 +1,7 @@
 # Announcer for Avalon (KMP Scaffold)
 
 Kotlin Multiplatform app scaffold for an Avalon narrator with:
-- Shared Compose UI (Android + iOS)
+- Shared Compose UI (Android + iOS + Web/Wasm)
 - Typed Kotlin role catalog, clip IDs, and narration rules (no JSON manifests)
 - Bundled selectable voice packs with default-pack fallback for missing clips
 - Real platform playback adapters (`ExoPlayer` on Android, `AVAudioPlayer` on iOS)
@@ -41,6 +41,13 @@ Notes:
 
 - Compile common shared code:
   - `./gradlew :composeApp:compileCommonMainKotlinMetadata`
+- Run web dev server (Wasm):
+  - `./gradlew :composeApp:wasmJsBrowserDevelopmentRun`
+- Build web production bundle (Wasm):
+  - `./gradlew :composeApp:wasmJsBrowserDistribution`
+- Web runtime note:
+  - Dev server expects `/` to serve `composeApp/src/wasmJsMain/resources/index.html`.
+  - Production static hosting should serve the distribution directory root.
 - Run iOS simulator tests:
   - `./gradlew :composeApp:iosSimulatorArm64Test`
 - Build iOS app host for Simulator (from the new `iosApp` Xcode project):
